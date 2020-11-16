@@ -1,0 +1,584 @@
+﻿@page "{view?}"
+@model D301_WebApp.Pages.ReportModel
+@section Styles {
+    <link href="@Url.Content("~/css/daily_summary.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/css/dashboard.css")" rel="stylesheet" />
+}
+@{
+    ViewData["Title"] = "Report";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="flex-dashboard">
+        <div class="flex-column" style="flex-basis: 55%">
+            <div id="section-title">EXPORT YOUR INTAKES FROM ANY RANGE OF DAYS</div>
+            <div class="flex-dashboard-dates column-other">
+                <div class="container-date column-other">
+
+                    @if (Model.View.ToLower() == "rdi")
+                    {
+                        <a title="Compare your nutritional intake against the Recommended Daily Intake" data-placement="left" class="large-button-gradient btn-tertiary" asp-page="/Report" asp-route-startdate=@Model.StartDate.ToString("yyyy-MM-dd")
+                           asp-route-stopdate=@Model.StopDate.ToString("yyyy-MM-dd") asp-route-view="goals">Switch to Goals view</a>
+                    }
+                    else
+                    {
+                        <a title="Compare your nutritional intake against your own set goals" data-placement="left" class="large-button-gradient btn-tertiary" asp-page="/Report" asp-route-startdate=@Model.StartDate.ToString("yyyy-MM-dd")
+                           asp-route-stopdate=@Model.StopDate.ToString("yyyy-MM-dd") asp-route-view="rdi">Switch to RDI view</a>
+                    }
+                    <a title="Move back a day" data-placement="top" asp-route-startdate=@Model.StartDate.AddDays(-1).ToString("yyyy-MM-dd") asp-route-stopdate=@Model.StopDate.ToString("yyyy-MM-dd") asp-for="StopDate" role="button" id="normalDateButton1" style="float:left;" class="btn btn-secondary mb-1 large-button-gradient" onmousemove="mouseover('normalDateButton1')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    </a>
+                    <div class="btn-secondary" style="float:left">From @Model.StartDate.ToString("dd MMMM yyyy")</div>
+                    @if (Model.StartDate >= Model.StopDate)
+                    {
+                        <a role="button" class="btn btn-secondary mb-1 disabled button-gradient" style="float:left;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </a>
+                    }
+                    else
+                    {
+                        <a title="Move forward a day" data-placement="top" asp-route-startdate=@Model.StartDate.AddDays(1).ToString("yyyy-MM-dd") asp-route-stopdate=@Model.StopDate.ToString("yyyy-MM-dd") asp-for="StopDate" role="button" id="normalDateButton2" style="float:left;" class="btn btn-secondary mb-1 large-button-gradient" onmousemove="mouseover('normalDateButton2')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </a>
+                    }
+
+
+                    @if (Model.StopDate <= Model.StartDate)
+                    {
+                        <a role="button" class="btn btn-secondary mb-1 disabled button-gradient" style="float:left;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        </a>
+                    }
+                    else
+                    {
+                        <a title="Move back a day" data-placement="top" asp-route-stopdate=@Model.StopDate.AddDays(-1).ToString("yyyy-MM-dd") asp-route-startdate=@Model.StartDate.ToString("yyyy-MM-dd") asp-for="StartDate" role="button" id="normalDateButton3" style="float:left;" class="btn btn-secondary mb-1 large-button-gradient" onmousemove="mouseover('normalDateButton3')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        </a>
+                    }
+                    <div title="Move forward a day" data-placement="top" class="btn-secondary" style="float:left">To @Model.StopDate.ToString("dd MMMM yyyy")</div>
+                    <a asp-route-stopdate=@Model.StopDate.AddDays(1).ToString("yyyy-MM-dd") asp-route-startdate=@Model.StartDate.ToString("yyyy-MM-dd") asp-for="StartDate" role="button" id="normalDateButton4" style="float:left;" class="btn btn-secondary mb-1 large-button-gradient" onmousemove="mouseover('normalDateButton4')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </a>
+                </div>
+            </div>
+            @*<div id="date-banner" class="bg-light text-center py-2 row">
+                    <div class="col-6">
+                        <a asp-route-startdate=@Model.StartDate.AddDays(-1).ToString("yyyy-MM-dd") asp-route-stopdate=@Model.StopDate.ToString("yyyy-MM-dd") role="button" class="btn btn-primary mb-1">&lt;-</a>
+                        <h3 class="d-inline-block p-2">From @Model.StartDate.ToString("dd MMMM yyyy")</h3>
+                        @if (Model.StartDate >= Model.StopDate)
+                        {
+                            <a role="button" class="btn btn-primary mb-1 disabled">-&gt;</a>
+                        }
+                        else
+                        {
+                            <a asp-route-startdate=@Model.StartDate.AddDays(1).ToString("yyyy-MM-dd") asp-route-stopdate=@Model.StopDate.ToString("yyyy-MM-dd") role="button" class="btn btn-primary mb-1">-&gt;</a>
+                        }
+
+                    </div>
+                    <div class="col-6">
+                        @if (Model.StopDate <= Model.StartDate)
+                        {
+                            <a role="button" class="btn btn-primary mb-1 disabled">&lt;-</a>
+                        }
+                        else
+                        {
+                            <a asp-route-stopdate=@Model.StopDate.AddDays(-1).ToString("yyyy-MM-dd") asp-route-startdate=@Model.StartDate.ToString("yyyy-MM-dd") role="button" class="btn btn-primary mb-1">&lt;-</a>
+                        }
+                        <h3 class="d-inline-block p-2">To @Model.StopDate.ToString("dd MMMM yyyy")</h3>
+                        <a asp-route-stopdate=@Model.StopDate.AddDays(1).ToString("yyyy-MM-dd") asp-route-startdate=@Model.StartDate.ToString("yyyy-MM-dd") role="button" class="btn btn-primary mb-1">-&gt;</a>
+                    </div>
+                </div>*@
+            @*<p class="px-0">@Model.userFullName</p>*@
+
+            <ul class="nav nav-tabs" id="tabContent" role="tablist" style="margin-right:20px;">
+                <li class="modal-tab">
+                    <a class="nav-link active" href="#trackedTab" data-toggle="tab" id="TrackedTab" role="tab" aria-controls="view-tracked" aria-selected="true">Tracked Nutrients</a>
+                </li>
+                <li class="modal-tab">
+                    <a class="nav-link" href="#macroTab" data-toggle="tab" id="MacroTab" role="tab" aria-controls="view-macro" aria-selected="false">Macronutrients</a>
+                </li>
+                <li class="modal-tab">
+                    <a class="nav-link" href="#vitaminsTab" data-toggle="tab" id="VitaminsTab" role="tab" aria-controls="view-vitamins" aria-selected="false">Vitamins</a>
+                </li>
+                <li class="modal-tab">
+                    <a class="nav-link" href="#fatsTab" data-toggle="tab" id="FatsTab" role="tab" aria-controls="view-fats" aria-selected="false">Fats</a>
+                </li>
+                <li class="modal-tab">
+                    <a class="nav-link" href="#mineralsTab" data-toggle="tab" id="MineralsTab" role="tab" aria-controls="view-minerals" aria-selected="false">Minerals</a>
+                </li>
+            </ul>
+            <div id="container-new" class="step4" style="margin-right:20px;">
+                <div class="tab-content" id="nav-tabContent">
+
+                    @if (Model.Intake.Count() == 0)
+                    {<div id="message" class="col-md text-center border-top">
+                            <p>No intake found in this time range!</p>
+                        </div>
+                    }
+                    else
+                    {
+                        //split list of properties into tracked and untracked
+                        var propertyList = Model.FoodTotal.GetType().GetProperties().Where(i => i.GetValue(Model.FoodTotal) != null && i.Name != "Amount" && i.Name != "Enegry" /*&& !Model.trackedNutrients.Contains(i.Name)).OrderBy(i => i.Name*/);
+                        var trackedPropertyList = Model.FoodTotal.GetType().GetProperties().Where(i => Model.trackedNutrients.Contains(i.Name)).OrderBy(i => i.Name);
+
+                        //display energy/goal if goal view selected, or energy/rdi if rdi view selected
+                        float energyPercentage = 0;
+                        String displayEnergy = "";
+
+                        if (Model.View.ToLower() == "rdi")
+                        {
+                            energyPercentage = Model.FoodTotal.Enegry / Model.RDI_Category.Enegry;
+                            displayEnergy = Model.FoodTotal.Enegry.ToString("0") + " / " + Model.RDI_Category.Enegry + Model.AbrevGoalUnit;
+                        }
+                        else
+                        {
+                            energyPercentage = Model.FoodTotal.Enegry / Model.Goals.Enegry;
+                            displayEnergy = Model.FoodTotal.Enegry.ToString("0") + " / " + Model.Goals.Enegry + Model.AbrevGoalUnit;
+                        }
+                        <div class="row nutrient-summary tab-pane fade show active" role="tabpanel" id="trackedTab" aria-labelledby="view-tracked-tab">
+                            @if (Model.Intake.Count() == 0)
+                            {<div id="message" class="col-md text-center border-top">
+                                    <p>No intake for found in this time range!</p>
+                                </div>
+                            }
+                            else
+                            {
+
+                                if (Model.View.ToLower() == "rdi")
+                                {
+                                    energyPercentage = Model.FoodTotal.Enegry / Model.RDI_Category.Enegry;
+                                    displayEnergy = Model.FoodTotal.Enegry.ToString("0") + " / " + Model.RDI_Category.Enegry + Model.AbrevGoalUnit;
+                                }
+                                else
+                                {
+                                    energyPercentage = Model.FoodTotal.Enegry / Model.Goals.Enegry;
+                                    displayEnergy = Model.FoodTotal.Enegry.ToString("0") + " / " + Model.Goals.Enegry + Model.AbrevGoalUnit;
+                                }
+
+                                <div id="energy-summary" class="row border-top py-3 pr-3">
+                                    <h3 class="col-12 pr-0">Energy consumption</h3>
+                                    <p class="col-md-2 col-3 my-auto font-weight-bold text-right py-0 pr-3">Energy</p>
+                                    <div class="progress-bar" data-value=@energyPercentage>@displayEnergy</div>
+                                </div>
+                                <div id="tracked-summary" class="row border-top py-3">
+                                    <h3 class="col-12">Tracked nutrients</h3>
+                                    @foreach (var property in trackedPropertyList)
+                                    {
+                                        float totalNutrient = (float)property.GetValue(Model.FoodTotal);
+                                        float percentage = 0;
+                                        String displayValue = "";
+
+                                        if (Model.View.ToLower() == "rdi")
+                                        {
+                                            float RDI_Value = (float)Model.RDI_Category.GetType().GetProperty(property.Name).GetValue(Model.RDI_Category);
+                                            percentage = totalNutrient / RDI_Value;
+                                            displayValue = totalNutrient.ToString("0.0") + " / " + RDI_Value.ToString("0.0") + Unit.GetUnit(property.Name);
+                                        }
+                                        else
+                                        {
+                                            float GoalValue = (float)Model.Goals.GetType().GetProperty(property.Name).GetValue(Model.Goals);
+                                            percentage = totalNutrient / GoalValue;
+                                            displayValue = totalNutrient.ToString("0.0") + " / " + GoalValue.ToString("0.0") + Unit.GetUnit(property.Name);
+                                        }
+
+                                        <div class="col-sm-4 col-12 m-0 align-items-start">
+                                            <p class="font-weight-bold mb-0">@property.Name</p>
+                                            <div class="progress-bar" data-value=@percentage>@displayValue</div>
+                                        </div>
+                                    }
+                                    @*<a href="#" class="col-12 py-2">Change which nutrients you want to track...</a>*@
+                                </div>
+                            }
+                        </div>
+                        <div class="row nutrient-summary tab-pane fade" role="tabpanel" id="macroTab" aria-labelledby="view-macro-tab">
+                            @foreach (var property in propertyList)
+                            {
+                                if (property.Name.ToString() == "Carbohydrates" | property.Name.ToString() == "Protein" | property.Name.ToString() == "Water" | property.Name.ToString() == "Fat" | property.Name.ToString() == "DietaryFibre" | property.Name.ToString() == "Sugars" | property.Name.ToString() == "Starch" | property.Name.ToString() == "Alcohol")
+                                {
+                                    System.Diagnostics.Debug.WriteLine(property.Name);
+                                    float totalNutrient = (float)property.GetValue(Model.FoodTotal);
+                                    float percentage = 0;
+                                    string dPercentage = "";
+                                    String displayValue = "";
+                                    float RDI_Value = (float)Model.RDI_Category.GetType().GetProperty(property.Name).GetValue(Model.RDI_Category);
+                                    float GoalValue = (float)Model.Goals.GetType().GetProperty(property.Name).GetValue(Model.Goals);
+
+
+
+                                    if (Model.View.ToLower() == "rdi")
+                                    {
+                                        percentage = totalNutrient / RDI_Value;
+                                        dPercentage = RDI_Value == 0 ? "no rdi value for this nutrient" : Math.Round((percentage * 100), 0).ToString() + "%";
+                                        displayValue = totalNutrient.ToString("0.0") + " / " + RDI_Value.ToString("0.0") + Unit.GetUnit(property.Name);
+
+                                        if (RDI_Value == 0)
+                                        {
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=0>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            //should be @Html.DisplayFor(ReportModel => Model.FoodTotal.Property) but can't get it to work
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=@percentage>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        percentage = totalNutrient / GoalValue;
+                                        dPercentage = GoalValue == 0 ? "goal not set" : Math.Round((percentage * 100), 0).ToString() + "%";
+                                        displayValue = totalNutrient.ToString("0.0") + " / " + GoalValue.ToString("0.0") + Unit.GetUnit(property.Name);
+
+                                        if (GoalValue == 0)
+                                        {
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=0>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            //should be @Html.DisplayFor(ReportModel => Model.FoodTotal.Property) but can't get it to work
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=@percentage>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+                                    }
+
+
+                                }
+                            }
+                        </div>
+                        <div class="row nutrient-summary tab-pane fade" role="tabpanel" id="vitaminsTab" aria-labelledby="view-vitamins-tab">
+                            @foreach (var property in propertyList)
+                            {
+                                if (property.Name.ToString() == "VitaminA" | property.Name.ToString() == "VitaminB6" | property.Name.ToString() == "VitaminB12" | property.Name.ToString() == "VitaminC" | property.Name.ToString() == "VitaminD" | property.Name.ToString() == "VitaminE" | property.Name.ToString() == "BetaCarotene" | property.Name.ToString() == "Thiamin" | property.Name.ToString() == "Riboflavin" | property.Name.ToString() == "Niacin" | property.Name.ToString() == "DietaryFolate")
+                                {
+                                    System.Diagnostics.Debug.WriteLine(property.Name);
+                                    float totalNutrient = (float)property.GetValue(Model.FoodTotal);
+                                    float percentage = 0;
+                                    string dPercentage = "";
+                                    String displayValue = "";
+                                    float RDI_Value = (float)Model.RDI_Category.GetType().GetProperty(property.Name).GetValue(Model.RDI_Category);
+                                    float GoalValue = (float)Model.Goals.GetType().GetProperty(property.Name).GetValue(Model.Goals);
+
+
+
+                                    if (Model.View.ToLower() == "rdi")
+                                    {
+                                        percentage = totalNutrient / RDI_Value;
+                                        dPercentage = RDI_Value == 0 ? "no rdi value for this nutrient" : Math.Round((percentage * 100), 0).ToString() + "%";
+                                        displayValue = totalNutrient.ToString("0.0") + " / " + RDI_Value.ToString("0.0") + Unit.GetUnit(property.Name);
+
+                                        if (RDI_Value == 0)
+                                        {
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=0>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            //should be @Html.DisplayFor(ReportModel => Model.FoodTotal.Property) but can't get it to work
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=@percentage>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        percentage = totalNutrient / GoalValue;
+                                        dPercentage = GoalValue == 0 ? "goal not set" : Math.Round((percentage * 100), 0).ToString() + "%";
+                                        displayValue = totalNutrient.ToString("0.0") + " / " + GoalValue.ToString("0.0") + Unit.GetUnit(property.Name);
+
+                                        if (GoalValue == 0)
+                                        {
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=0>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            //should be @Html.DisplayFor(ReportModel => Model.FoodTotal.Property) but can't get it to work
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=@percentage>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            }
+                        </div>
+                        <div class="row nutrient-summary tab-pane fade" role="tabpanel" id="fatsTab" aria-labelledby="view-fats-tab">
+                            @foreach (var property in propertyList)
+                            {
+                                if (property.Name.ToString() == "Fat" | property.Name.ToString() == "SFA" | property.Name.ToString() == "MUFA" | property.Name.ToString() == "PUFA" | property.Name.ToString() == "AlphaLinolenicAcid" | property.Name.ToString() == "LinoleicAcid" | property.Name.ToString() == "Cholestrol")
+                                {
+                                    System.Diagnostics.Debug.WriteLine(property.Name);
+                                    float totalNutrient = (float)property.GetValue(Model.FoodTotal);
+                                    float percentage = 0;
+                                    string dPercentage = "";
+                                    String displayValue = "";
+                                    float RDI_Value = (float)Model.RDI_Category.GetType().GetProperty(property.Name).GetValue(Model.RDI_Category);
+                                    float GoalValue = (float)Model.Goals.GetType().GetProperty(property.Name).GetValue(Model.Goals);
+
+
+
+                                    if (Model.View.ToLower() == "rdi")
+                                    {
+                                        percentage = totalNutrient / RDI_Value;
+                                        dPercentage = RDI_Value == 0 ? "no rdi value for this nutrient" : Math.Round((percentage * 100), 0).ToString() + "%";
+                                        displayValue = totalNutrient.ToString("0.0") + " / " + RDI_Value.ToString("0.0") + Unit.GetUnit(property.Name);
+
+                                        if (RDI_Value == 0)
+                                        {
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=0>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            //should be @Html.DisplayFor(ReportModel => Model.FoodTotal.Property) but can't get it to work
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=@percentage>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        percentage = totalNutrient / GoalValue;
+                                        dPercentage = GoalValue == 0 ? "goal not set" : Math.Round((percentage * 100), 0).ToString() + "%";
+                                        displayValue = totalNutrient.ToString("0.0") + " / " + GoalValue.ToString("0.0") + Unit.GetUnit(property.Name);
+
+                                        if (GoalValue == 0)
+                                        {
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=0>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            //should be @Html.DisplayFor(ReportModel => Model.FoodTotal.Property) but can't get it to work
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=@percentage>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            }
+                        </div>
+                        <div class="row nutrient-summary tab-pane fade" role="tabpanel" id="mineralsTab" aria-labelledby="view-minerals-tab">
+
+                            @foreach (var property in propertyList)
+                            {
+                                if (property.Name.ToString() == "Sodium" | property.Name.ToString() == "Potassium" | property.Name.ToString() == "Phosphorus" | property.Name.ToString() == "Calcium" | property.Name.ToString() == "Iron" | property.Name.ToString() == "Zinc" | property.Name.ToString() == "Iodine" | property.Name.ToString() == "Selenium")
+                                {
+                                    System.Diagnostics.Debug.WriteLine(property.Name);
+                                    float totalNutrient = (float)property.GetValue(Model.FoodTotal);
+                                    float percentage = 0;
+                                    string dPercentage = "";
+                                    String displayValue = "";
+                                    float RDI_Value = (float)Model.RDI_Category.GetType().GetProperty(property.Name).GetValue(Model.RDI_Category);
+                                    float GoalValue = (float)Model.Goals.GetType().GetProperty(property.Name).GetValue(Model.Goals);
+
+
+
+                                    if (Model.View.ToLower() == "rdi")
+                                    {
+                                        percentage = totalNutrient / RDI_Value;
+                                        dPercentage = RDI_Value == 0 ? "no rdi value for this nutrient" : Math.Round((percentage * 100), 0).ToString() + "%";
+                                        displayValue = totalNutrient.ToString("0.0") + " / " + RDI_Value.ToString("0.0") + Unit.GetUnit(property.Name);
+
+                                        if (RDI_Value == 0)
+                                        {
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=0>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            //should be @Html.DisplayFor(ReportModel => Model.FoodTotal.Property) but can't get it to work
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=@percentage>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        percentage = totalNutrient / GoalValue;
+                                        dPercentage = GoalValue == 0 ? "goal not set" : Math.Round((percentage * 100), 0).ToString() + "%";
+                                        displayValue = totalNutrient.ToString("0.0") + " / " + GoalValue.ToString("0.0") + Unit.GetUnit(property.Name);
+
+                                        if (GoalValue == 0)
+                                        {
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=0>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            //should be @Html.DisplayFor(ReportModel => Model.FoodTotal.Property) but can't get it to work
+                                            <div class="flex-row-goal" style="margin: -20px 0">
+                                                <div class="progress-bar" data-value=@percentage>@property.Name - @dPercentage </div>
+                                                <div class="goal-text">@displayValue</div>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            }
+
+
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+}
+else
+{
+    <p>You must be logged in to see this page!</p>
+}
+
+@section Scripts {
+    <script>
+        function runTour() {
+            const tour = new Shepherd.Tour({
+                defaults: {
+                    classes: 'shepherd-theme-dark'
+                },
+                useModalOverlay: true
+            });
+
+            tour.addStep({
+                id: 'step1',
+                title: 'SWAP GOALS VIEW',
+                text: 'Click here to swap between the recommended nutritional guidelines, and your own user set goals.',
+                cancelIcon: {
+                    enabled: true
+                },
+                canClickTarget: false,
+                modalOverlayOpeningPadding: 10,
+                modalOverlayOpeningRadius: 5,
+                attachTo: {
+                    element: '.btn-tertiary',
+                    on: 'bottom'
+                },
+                classes: 'example-step-extra-class',
+                buttons: [
+                    {
+                        text: 'Next',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'step2',
+                title: 'CHANGE THE DATE',
+                text: 'These buttons are your date navigation. The buttons with the arrows let you move forward or back a day.',
+                cancelIcon: {
+                    enabled: true
+                },
+                canClickTarget: false,
+                modalOverlayOpeningPadding: 10,
+                modalOverlayOpeningRadius: 5,
+                attachTo: {
+                    element: '.container-date',
+                    on: 'bottom'
+                },
+                classes: 'example-step-extra-class',
+                buttons: [
+                    {
+                        secondary: true,
+                        text: 'Back',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'step3',
+                title: 'REPORT TABS',
+                text: 'View nutrient sub-categories by navigating between the tabs.',
+                cancelIcon: {
+                    enabled: true
+                },
+                canClickTarget: false,
+                modalOverlayOpeningPadding: 10,
+                modalOverlayOpeningRadius: 5,
+                attachTo: {
+                    element: '#tabContent',
+                    on: 'bottom'
+                },
+                classes: 'example-step-extra-class',
+                buttons: [
+                    {
+                        secondary: true,
+                        text: 'Back',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'step4',
+                title: 'VIEW YOUR PROGRESS',
+                text: 'Here you will see bar graphs showing progress towards either your own set goals or the RDI values, depending on which view you have toggled.',
+                cancelIcon: {
+                    enabled: true
+                },
+                canClickTarget: false,
+                modalOverlayOpeningPadding: 10,
+                modalOverlayOpeningRadius: 5,
+                attachTo: {
+                    element: '.step4',
+                    on: 'bottom'
+                },
+                classes: 'example-step-extra-class',
+                buttons: [
+                    {
+                        secondary: true,
+                        text: 'Back',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Finish',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.start()
+        }
+    </script>
+}

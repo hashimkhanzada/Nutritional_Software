@@ -1,0 +1,414 @@
+﻿@page
+@model D301_WebApp.Pages.IntakeModel
+@{
+    ViewData["Title"] = "Intake";
+    ViewData["ShowNav"] = false;
+}
+<div class="form-wrapper dark-background">
+
+    <div class="modal-content register-login-content" style="margin-top:80px; max-width:450px;">
+        <div class="modal-header">
+            <div class="modal-title register-login-title">Edit Intake</div>
+        </div>
+        <div class="modal-body register-login-body form-carousel">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" role="tabpanel" id="intakeTab" aria-labelledby="intake-tab">
+                    <form id="IntakeForm" asp-page-handler="OnPost" autocomplete="off" method="post">
+                        @{
+                            if (!Model.NewIntake)
+                            {
+                                <input id="IntakeId" asp-for="Intake.Id" type="hidden" />
+                                <span asp-validation-for="Intake.Id" class="text-danger"></span>
+                                <input id="Date" asp-for="Intake.Date" type="hidden" />
+                                <span asp-validation-for="Intake.Date" class="text-danger"></span>
+                            }
+                            else
+                            {
+                                <input id="Date" asp-for="Intake.Date" type="hidden" value="@Model.NewDate" />
+                                <span asp-validation-for="Intake.Date" class="text-danger"></span>
+                            }
+                        }
+
+                        <input id="NewIntake" asp-for="NewIntake" type="hidden" value="@Model.NewIntake" />
+                        <span asp-validation-for="NewIntake" class="text-danger"></span>
+
+                        @{
+                            if (Model.Intake.FoodId != null)
+                            {
+                                <input id="FoodId" asp-for="Intake.Food.Id" />
+                            }
+                            else if (Model.Intake.CustomFoodId != null)
+                            {
+                                <input id="CustomFoodId" asp-for="Intake.CustomFood.Id" />
+                            }
+                        }
+
+
+
+                        <input id="VariationId" asp-for="Intake.VariationId" type="hidden" />
+                        <span asp-validation-for="Intake.VariationId" class="text-danger"></span>
+
+                        <input id="HAmount" asp-for="Intake.Amount" type="hidden" />
+                        <span asp-validation-for="Intake.Amount" class="text-danger"></span>
+
+                        <input id="HQuantity" asp-for="Intake.Quantity" type="hidden" />
+                        <span asp-validation-for="Intake.Quantity" class="text-danger"></span>
+
+                        <input id="HMeasure" asp-for="Intake.Measure" type="hidden" />
+                        <span asp-validation-for="Intake.Measure" class="text-danger"></span>
+
+                        <input id="HVariationName" asp-for="Intake.VariationName" type="hidden" />
+                        <span asp-validation-for="Intake.VariationName" class="text-danger"></span>
+
+                        <input id="HMealType" asp-for="Intake.MealType" type="hidden" value="Breakfast" />
+                        <span asp-validation-for="Intake.MealType" class="text-danger"></span>
+                    </form>
+
+                    <div class="wrapper my-4">
+                        <div class="register-form wrapper">
+                            <!-- Step Count -->
+                            <ul class="form-steps py-4 rounded shadow bg-light"></ul>
+
+
+                            <div id="intakeBody">
+
+                                <!-- Register Form -->
+                                <form id="intakeSearch" action="">
+                                    @*<h4 class="">Intake for [FirstName-LastName]</h4>*@
+                                    <div class="form-carousel-custom">
+                                        <!-- Section 1.  -->
+                                        <section data-step="Food">
+                                            <span id="ResultsFound" class="d-none text-danger pl-1">No food found...</span>
+                                            <div id="FoodInput" class="d-none">
+                                                <ul class="list-group mb-1">
+                                                    <li class="list-group-item d-flex list-group-item-action justify-content-between align-items-center btn-outline-dark ripple">
+                                                        <span id="FoodName">
+                                                            @{
+
+                                                                if (!Model.NewIntake)
+                                                                {
+                                                                    if (Model.Intake.FoodId != null)
+                                                                    {
+                                                                        @Model.Intake.Food.Name;
+                                                                    }
+                                                                    else if (Model.Intake.CustomFoodId != null)
+                                                                    {
+                                                                        @Model.Intake.CustomFood.Name;
+                                                                    }
+
+                                                                }
+                                                            }
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div id="FoodResults">
+                                            </div>
+                                        </section>
+                                        <section data-step="Serving">
+                                            <div id="VariationResults">
+                                            </div>
+                                        </section>
+                                        <section data-step="Quantity">
+                                            <div id="QuantityInput" class="d-none">
+                                                <div class="intake-section-3" style="margin-right:20px">
+                                                    <h6>Number of Servings:</h6>
+                                                    <input id="Qty"
+                                                           autocomplete="off"
+                                                           type="number"
+                                                           step="1"
+                                                           class="form-control mt-2 mb-2 text-center"
+                                                           placeholder="Number of Servings..."
+                                                           aria-label="Number of Servings"
+                                                           aria-describedby="button-addon3"
+                                                           onchange="validateQty()">
+                                                </div>
+                                                <div class="intake-section-3">
+                                                    <h6 for="MealType">Choose a meal type:</h6>
+                                                    <select name="MealType" id="MealType" class="form-control" onchange="updateMealType()">
+                                                        <option value="Breakfast">Breakfast</option>
+                                                        <option value="Lunch">Lunch</option>
+                                                        <option value="Dinner">Dinner</option>
+                                                        <option value="Snack">Snack</option>
+                                                    </select>
+                                                </div>
+
+
+                                            </div>
+
+                                        </section>
+                                        <section data-step="Confirm" style="margin-bottom:40px;">
+                                            <div id="intake-modal-finalsection" class="d-none">
+                                                <a id="finalSubmit" class="btn btn-secondary disabled large-button-gradient" onmousemove="mouseover('finalSubmit')" onclick="submitForm()" type="button">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                         width="24"
+                                                         height="24"
+                                                         viewBox="0 0 24 24"
+                                                         fill="none"
+                                                         stroke="currentColor"
+                                                         stroke-width="2"
+                                                         stroke-linecap="round"
+                                                         stroke-linejoin="round" class="feather feather-plus">
+                                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                                    </svg>
+                                                </a>
+
+                                                <a id="viewDetailsBtn" class="btn-secondary btn disabled large-button-gradient" onmousemove="mouseover('viewDetailsBtn')">View Food Nutrients</a>
+                                            </div>
+                                        </section>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div id="foodDetailsBody">
+                                <partial name="_FoodDetails" model="Model.Intake" />
+                                <button class="btn-primary" id="viewIntakeBtn">Back</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!--<div class="tab-pane fade" role="tabpanel" id="addCustomFoodTab" aria-labelledby="add-custom-food-tab">
+
+                    <div class="form-wrapper wrapper">-->
+                <!-- Step Count -->
+                <!--<ul class="form-steps py-4 rounded shadow bg-light"></ul>-->
+                <!-- Register Form -->
+                <!--<form method="post" id="AddCustomFoodForm" asp-page-handler="AddCustomFood" class="form p-4 rounded shadow bg-light">
+                    <div class="form-carousel shadow">-->
+                <!-- Section 1 -->
+                <!--<section class="current bg-transparent py-1" data-step="p1">
+                    <input asp-for="CustomFood.Id" class="form-control" type="hidden" />
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.Name" class="control-label"></label>
+                        <input asp-for="CustomFood.Name" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.Amount" class="control-label"></label>
+                        <input asp-for="CustomFood.Amount" class="form-control" value=0 />
+                        <span asp-validation-for="CustomFood.Amount" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.Enegry" class="control-label"></label>
+                        <input asp-for="CustomFood.Enegry" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.Enegry" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.EnegryNIP" class="control-label"></label>
+                        <input asp-for="CustomFood.EnegryNIP" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.EnegryNIP" class="text-danger"></span>
+                    </div>
+                </section>-->
+                <!-- Section 2 -->
+                <!--<section class="bg-transparent py-2" data-step="p2">
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.Carbohydrates" class="control-label"></label>
+                        <input asp-for="CustomFood.Carbohydrates" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.Carbohydrates" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.Protein" class="control-label"></label>
+                        <input asp-for="CustomFood.Protein" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.Protein" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.Fat" class="control-label"></label>
+                        <input asp-for="CustomFood.Fat" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.Fat" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.Water" class="control-label"></label>
+                        <input asp-for="CustomFood.Water" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.Water" class="text-danger"></span>
+                    </div>
+                </section>-->
+                <!-- Section 3 -->
+                <!--<section class="bg-transparent py-2" data-step="p3">
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.DietaryFibre" class="control-label"></label>
+                        <input asp-for="CustomFood.DietaryFibre" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.DietaryFibre" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.Sugars" class="control-label"></label>
+                        <input asp-for="CustomFood.Sugars" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.Sugars" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.Starch" class="control-label"></label>
+                        <input asp-for="CustomFood.Starch" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.Starch" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.SFA" class="control-label"></label>
+                        <input asp-for="CustomFood.SFA" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.SFA" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.MUFA" class="control-label"></label>
+                        <input asp-for="CustomFood.MUFA" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.MUFA" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.PUFA" class="control-label"></label>
+                        <input asp-for="CustomFood.PUFA" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.PUFA" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.Cholesterol" class="control-label"></label>
+                        <input asp-for="CustomFood.Cholesterol" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.Cholesterol" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.Sodium" class="control-label"></label>
+                        <input asp-for="CustomFood.Sodium" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.Sodium" class="text-danger"></span>
+                    </div>
+                </section>-->
+                <!-- Section 4 -->
+                <!--<section class="bg-transparent py-2" data-step="p4">
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.VitaminA" class="control-label"></label>
+                        <input asp-for="CustomFood.VitaminA" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.VitaminA" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.VitaminB6" class="control-label"></label>
+                        <input asp-for="CustomFood.VitaminB6" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.VitaminB6" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.VitaminB12" class="control-label"></label>
+                        <input asp-for="CustomFood.VitaminB12" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.VitaminB12" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.VitaminC" class="control-label"></label>
+                        <input asp-for="CustomFood.VitaminC" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.VitaminC" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.VitaminD" class="control-label"></label>
+                        <input asp-for="CustomFood.VitaminD" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.VitaminD" class="text-danger"></span>
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="CustomFood.VitaminE" class="control-label"></label>
+                        <input asp-for="CustomFood.VitaminE" class="form-control" value="0" />
+                        <span asp-validation-for="CustomFood.VitaminE" class="text-danger"></span>
+                    </div>
+                </section>-->
+                <!-- Section 5 -->
+                <!--<section class="bg-transparent py-2" data-step="p5">
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.Iodine" class="control-label"></label>
+                            <input asp-for="CustomFood.Iodine" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.Iodine" class="text-danger"></span>
+                        </div>
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.Potassium" class="control-label"></label>
+                            <input asp-for="CustomFood.Potassium" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.Potassium" class="text-danger"></span>
+                        </div>
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.Phosphorus" class="control-label"></label>
+                            <input asp-for="CustomFood.Phosphorus" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.Phosphorus" class="text-danger"></span>
+                        </div>
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.Calcium" class="control-label"></label>
+                            <input asp-for="CustomFood.Calcium" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.Calcium" class="text-danger"></span>
+                        </div>
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.Iron" class="control-label"></label>
+                            <input asp-for="CustomFood.Iron" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.Iron" class="text-danger"></span>
+                        </div>
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.Zinc" class="control-label"></label>
+                            <input asp-for="CustomFood.Zinc" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.Zinc" class="text-danger"></span>
+                        </div>
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.Selenium" class="control-label"></label>
+                            <input asp-for="CustomFood.Selenium" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.Selenium" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.BetaCarotene" class="control-label"></label>
+                            <input asp-for="CustomFood.BetaCarotene" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.BetaCarotene" class="text-danger"></span>
+                        </div>
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.Thiamin" class="control-label"></label>
+                            <input asp-for="CustomFood.Thiamin" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.Thiamin" class="text-danger"></span>
+                        </div>
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.Riboflavin" class="control-label"></label>
+                            <input asp-for="CustomFood.Riboflavin" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.Riboflavin" class="text-danger"></span>
+                        </div>
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.Niacin" class="control-label"></label>
+                            <input asp-for="CustomFood.Niacin" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.Niacin" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.DietaryFolate" class="control-label"></label>
+                            <input asp-for="CustomFood.DietaryFolate" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.DietaryFolate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.AlphaLinolenicAcid" class="control-label"></label>
+                            <input asp-for="CustomFood.AlphaLinolenicAcid" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.AlphaLinolenicAcid" class="text-danger"></span>
+                        </div>
+                        <div class="form-group w-100 px-1">
+                            <label asp-for="CustomFood.LinoleicAcid" class="control-label"></label>
+                            <input asp-for="CustomFood.LinoleicAcid" class="form-control" value="0" />
+                            <span asp-validation-for="CustomFood.LinoleicAcid" class="text-danger"></span>
+                        </div>
+                    </section>
+                </div>-->
+                <!-- Form Controls -->
+                <!--<div class="px-1">
+                                <span class="form-error flex-column text-danger order-1 pb-2"></span>
+                                <div class="form-controls d-flex justify-content-between">
+                                    <div class="mb-1">
+                                        <input class="prev-btn bg-transparent border-0" type="button" value="Back" />
+                                        <input class="next-btn ripple shadow" type="button" value="Continue" />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/intake.js"></script>
+    <script>
+        let max = 10
+
+        intakeBody = document.getElementById("intakeBody");
+        foodDetailsBody = document.getElementById("foodDetailsBody");
+
+        foodDetailsBody.style.display = "none";
+    </script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+}

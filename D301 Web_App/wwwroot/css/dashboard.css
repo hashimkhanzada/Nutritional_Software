@@ -1,0 +1,77 @@
+﻿ 
+.progress-label {
+    width: 105px;
+}
+
+#daily-progress {
+    width: 50%;
+    max-width: 450px;
+    position: relative;
+    right: 0;
+}
+
+#heading {
+    width: auto;
+    position: absolute;
+}
+
+
+/*small screens*/
+@media (max-width: 767px) {
+    #intake-btn {
+        bottom: 25px;
+        right: 25px;
+    }
+}
+
+/*extra-small screens*/
+@media (max-width: 460px) {
+    #daily-progress {
+        width: 100%;
+        display: inline-block;
+    }
+
+    #heading {
+        position: initial;
+    }
+}
+
+
+.tableFixHead {
+    display:block;
+    overflow-y: auto;
+    height: 400px;
+}
+
+    .tableFixHead thead th {
+        background-color: #ced4da;
+        position: sticky;
+        top: 0;
+    }
+
+.flex-dashboard {
+    display: flex;
+    flex-direction: row;
+    flex-basis: 100%;
+    margin:0px;
+    width: 100%;
+    flex: 1;
+}
+
+
+
+.flex-dashboard-progress {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.flex-row-goal {
+    display:flex;
+
+}
+
+.daily-progress {
+    max-width:500px;
+    margin-right:0px;
+}

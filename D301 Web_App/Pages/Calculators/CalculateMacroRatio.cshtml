@@ -1,0 +1,167 @@
+﻿@page
+@model CalculateMacroRatioModel
+@{
+    ViewData["Title"] = "Macro Calculator";
+    ViewData["ShowHelp"] = false;
+}
+@section Styles {
+    <environment include="Development">
+        <link href="@Url.Content("~/css/calculator.min.css")" rel="stylesheet" />
+    </environment>
+}
+
+<h1>Set Goals</h1>
+
+<partial name="../Areas/Identity/Pages/Account/Manage/_StatusMessage" model="Model.StatusMessage" />
+
+<div class="form-wrapper wrapper">
+
+    <form method="post" class="form p-4 rounded shadow bg-light">
+
+        <div class="form-carousel">
+
+            <section class="current bg-transparent py-1" data-step="Macro-Goals">
+                <div class="form-group w-100 px-1">
+                    <span>
+                        <label style="font-weight:bold">BMR:</label>
+                        <label style="font-weight:bold" id="bmrr">@Model.BMR</label>
+                    </span>
+                    <br />
+                    <span>
+                        <label style="font-weight:bold">TDEE:</label>
+                        <label style="font-weight:bold" id="tdee">@Model.TDEE</label>
+                    </span>
+                    <hr />
+                </div>
+                <div class="form-group w-100 px-1">
+                    <label asp-for="SelectGoal"></label>
+                    <select asp-for="SelectGoal" class="form-control" id="goalList" onchange="calculateEnergy(goalList)">
+                        <option value=500>Lose 0.5 kg per week</option>
+                        <option value=250>Lose 0.25 kg per week</option>
+                        <option value="0">Maintain weight</option>
+                        <option value=250>Gain 0.25 kg per week</option>
+                        <option value=500>Gain 0.5 kg per week</option>
+                    </select>
+                </div>
+                <div class="form-group w-100 px-1">
+                    <label asp-for="Input.EnegryGoal"></label>
+                    <input asp-for="Input.EnegryGoal" value="" class="form-control" id="adjusted_tdee"/>
+                    <span asp-validation-for="Input.EnegryGoal" class="text-danger"></span>
+                </div>
+
+                <div class="form-group w-100 px-1">
+                    <label id="lblCarb">Carbohydrates:</label>
+                    <select asp-items="Model.GoalPercentages" class="form-control" id="onecarb" onchange="calculateCarbs(onecarb)">
+                    </select>
+                    <input type="hidden" asp-for="Input.CarbohydratesGoal" value="0" id="carb_goal" />
+                </div>
+                <div class="form-group w-100 px-1">
+                    <label id="lblProtein">Protein:</label>
+                    <select asp-items="Model.GoalPercentages" class="form-control" id="oneprotein" onchange="calculateProtein(oneprotein)"></select>
+                    <input type="hidden" asp-for="Input.ProteinGoal" id="protein_goal" value="0" />
+                </div>
+                <div class="form-group w-100 px-1">
+                    <label asp-for="Input.FatGoal" id="lblFat">Fat:</label>
+                    <select asp-items="Model.GoalPercentages" class="form-control" id="onefat" onchange="calculateFat(onefat), toggleFatSubGroups()"></select>
+                    <input type="hidden" asp-for="Input.FatGoal" id="fat_goal" value="0" />
+                </div>
+                <div id="fatSubGroups" style="display: none">
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="Input.SFAGoal" id="lblSfa">Saturated Fatty Acids:</label>
+                        <select asp-items="Model.GoalPercentages" class="form-control" id="onesfa" onchange="calculateSfa(onesfa)"></select>
+                        <input type="hidden" asp-for="Input.SFAGoal" id="sfa_goal" value="0" />
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="Input.MUFAGoal" id="lblMufa">Monounsaturated Fatty Acids:</label>
+                        <select asp-items="Model.GoalPercentages" class="form-control" id="onemufa" onchange="calculateMufa(onemufa)"></select>
+                        <input type="hidden" asp-for="Input.MUFAGoal" id="mufa_goal" value="0" />
+                    </div>
+                    <div class="form-group w-100 px-1">
+                        <label asp-for="Input.PUFAGoal" id="lblPufa">Polyunsaturated Fatty Acids:</label>
+                        <select asp-items="Model.GoalPercentages" class="form-control" id="onepufa" onchange="calculatePufa(onepufa)"></select>
+                        <input type="hidden" asp-for="Input.PUFAGoal" id="pufa_goal" value="0" />
+                    </div>
+                </div>
+
+                <div class="form-group w-100 px-1">
+                    <label id="ttt" style="font-weight:bold">Macronutrients must equal 100%</label>
+                    <h4 id="totperc"></h4>
+                </div>
+                <span>
+                    <input asp-for="SetMicroGoals" />
+                    <label for="SetMicroGoals">Set micro-nutrient goals based on RDI</label>
+                </span>
+                <br />
+                <span hidden>
+                    <input asp-for="Input.GoalUnit" id="goalUnit">
+
+                    <input asp-for="Input.WaterGoal" />
+
+                    <input asp-for="Input.DietaryFibreGoal" />
+
+                    <input asp-for="Input.SugarsGoal" />
+
+                    <input asp-for="Input.AlphaLinolenicAcidGoal" />
+
+                    <input asp-for="Input.LinoleicAcidGoal" />
+
+                    <input asp-for="Input.SodiumGoal" />
+
+                    <input asp-for="Input.IodineGoal" />
+
+                    <input asp-for="Input.PotassiumGoal" />
+
+                    <input asp-for="Input.PhosphorusGoal" />
+
+                    <input asp-for="Input.CalciumGoal" />
+
+                    <input asp-for="Input.IronGoal" />
+
+                    <input asp-for="Input.ZincGoal" />
+
+                    <input asp-for="Input.SeleniumGoal" />
+
+                    <input asp-for="Input.VitaminAGoal" />
+
+                    <input asp-for="Input.ThiaminGoal" />
+
+                    <input asp-for="Input.RiboflavinGoal" />
+
+                    <input asp-for="Input.NiacinGoal" />
+
+                    <input asp-for="Input.VitaminB6Goal" />
+
+                    <input asp-for="Input.VitaminB12Goal" />
+
+                    <input asp-for="Input.DietaryFolateGoal" />
+
+                    <input asp-for="Input.VitaminCGoal" />
+
+                    <input asp-for="Input.VitaminDGoal" />
+
+                    <input asp-for="Input.VitaminEGoal" />
+                </span>
+                <button id="btnSubmit" type="submit" class="btn btn-primary float-right">Save</button>
+            </section>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/calculator.min.js"></script>
+    <script>document.onload = setDefaultMacroPercentages(),calculateEnergy(goalList)</script>
+    <script>
+        // When the user clicks on <div>, open the popup
+        function popupTdee() {
+            var popup = document.getElementById("tdeePopup");
+            popup.classList.toggle("show");
+        }
+
+        function toggleFatSubGroups() {
+            var x = document.getElementById("fatSubGroups");
+                x.style.display = "block";
+        }
+
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

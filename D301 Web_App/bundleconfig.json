@@ -1,0 +1,14 @@
+[
+  {
+    "outputFileName": "wwwroot/css/calculator.min.css",
+    "inputFiles": [
+      "wwwroot/css/calculator.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/calculator.min.js",
+    "inputFiles": [
+      "wwwroot/js/calculator.js"
+    ]
+  }
+]

@@ -1,0 +1,7 @@
+[
+  {
+    "outputFile": "wwwroot/css/index.css",
+    "inputFile": "Assets/Styles/Index.scss",
+    "sourceMap": false
+  }
+]

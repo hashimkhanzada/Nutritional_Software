@@ -1,0 +1,115 @@
+﻿@page
+@model ProfileModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Profile;
+    ViewData["ShowHelp"] = false;
+}
+
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div id="container-new" class="settings-container-new">
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            @if (Model.userisOwner)
+            {
+                <div class="form-group">
+                    <label asp-for="Username"></label>
+                    <input asp-for="Username" class="form-control" disabled />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.FirstName"></label>
+                    <input asp-for="Input.FirstName" class="form-control" />
+                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.LastName"></label>
+                    <input asp-for="Input.LastName" class="form-control" />
+                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Weight"></label>
+                    <div class="input-group">
+                        <input asp-for="Input.Weight" class="form-control" />
+                        <select asp-for="Input.WeightUnit" class="custom-select"
+                                id="weight-unit"
+                                style="flex: 0.12;">
+                            <option value="kg" selected>kg - Kilograms</option>
+                            <option value="lb">lb - Pounds</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Input.Weight" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Height"></label>
+                    <div class="input-group">
+                        <input asp-for="Input.Height" class="form-control" />
+                        <select asp-for="Input.HeightUnit" class="custom-select"
+                                id="height-unit"
+                                style="flex: 0.12;">
+                            <option value="cm" selected>cm - Centimeter</option>
+                            <option value="in">in - Inches</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Input.Height" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.ActivityLevel"></label>
+                    <select asp-for="Input.ActivityLevel" class="form-control">
+                        <option value="Sedentary">Sedentary</option>
+                        <option value="LightlyActive">Lightly Active</option>
+                        <option value="ModeratelyActive">Moderately Active</option>
+                        <option value="VeryActive">Very Active</option>
+                        <option value="ExtremelyActive">Extremely Active</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.MedicalConditions"></label>
+                    <input asp-for="Input.MedicalConditions" class="form-control" />
+                    <span asp-validation-for="Input.MedicalConditions" class="text-danger"></span>
+                </div>
+
+                if (Model.Gender == "F")
+                {
+                    <div class="form-check mb-2">
+                        <input type="checkbox" asp-for="Input.Pregnant" class="form-check-input" />
+                        <label class="form-check-label" asp-for="Input.Pregnant"></label>
+                        <span asp-validation-for="Input.Pregnant" class="text-danger"></span>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input type="checkbox" asp-for="Input.Lactating" class="form-check-input" />
+                        <label class="form-check-label" asp-for="Input.Lactating"></label>
+                        <span asp-validation-for="Input.Lactating" class="text-danger"></span>
+                    </div>
+                }
+
+                <button id="update-profile-button" type="submit" class="btn btn-primary">Save</button>
+
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            First name: @Model.Input.FirstName
+                        </div>
+                        <div class="form-group">
+                            Last name: @Model.Input.LastName
+                        </div>
+                        <div class="form-group">
+                            Weight: @Model.Input.Weight
+                        </div>
+                        <div class="form-group">
+                            Height: @Model.Input.Height
+                        </div>
+                        <div class="form-group">
+                            Medical Conditions: @Model.Input.MedicalConditions
+                        </div>
+                    </div>
+                </div>
+            }
+        </form>
+    </div>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }

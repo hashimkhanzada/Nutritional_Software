@@ -1,0 +1,112 @@
+﻿.form-carousel {
+    display: flex;
+    overflow: hidden;
+}
+
+.form-carousel > section {
+    // scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 100%;
+    background: #eee;
+    transform-origin: center center;
+    transform: scale(1);
+    transition: transform 0.5s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    left: 0%;
+    height: 0;
+    transition: all 0.3s ease-in-out;
+
+    &.current {
+        height: 100%;
+    }
+}
+
+// Form Steps
+
+$step-width: 44px;
+$line-width: 3px;
+
+.form-steps {
+    counter-reset: step;
+    height: 120px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-steps li {
+    list-style-type: none;
+    float: left;
+    width: 33.33%;
+    position: relative;
+    text-align: center;
+    color: theme-color($key: "dark");
+}
+
+.form-steps li:before {
+    content: counter(step);
+    counter-increment: step;
+    width: $step-width;
+    height: $step-width;
+    line-height: #{$step-width - ($line-width * 2)};
+    border: $line-width solid theme-color($key: "dark");
+    color: theme-color($key: "dark");
+    display: block;
+    text-align: center;
+    margin: 0 auto 10px auto;
+    border-radius: 50%;
+}
+
+.form-steps li:after {
+    content: "";
+    position: absolute;
+    width: calc(100% - #{$step-width});
+    height: $line-width;
+    top: #{$step-width / 2};
+    left: calc(-50% + #{$step-width / 2});
+    background-color: theme-color($key: "dark");
+}
+
+.form-steps li:first-child:after {
+    content: none;
+}
+
+// .form-steps li.complete {
+//   color: theme-color($key: "success");
+//   transition: all 0.3s ease-in-out;
+// }
+
+.form-steps li:first-child():before,
+.form-steps li.complete + li:before {
+    border-color: darken(theme-color($key: "success"), 20%);
+}
+
+.form-steps li.complete:before {
+    border-color: darken(theme-color($key: "success"), 20%);
+    background: theme-color($key: "success");
+    transition: all 0.3s ease-in-out;
+}
+
+.form-steps li.complete + li:after {
+    background-color: darken(theme-color($key: "success"), 20%);
+    transition: all 0.3s ease-in-out;
+}
+
+.form-controls {
+    flex-direction: column-reverse;
+
+    div,
+    span {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    @include media-breakpoint-up(sm) {
+        flex-direction: row;
+    }
+}

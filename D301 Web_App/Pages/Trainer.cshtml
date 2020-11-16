@@ -1,0 +1,65 @@
+﻿@page
+@model D301_WebApp.Pages.TrainerModel
+@{
+    ViewData["Title"] = "Trainer";
+}
+
+
+    <div class="wrapper my-4">
+        <div class="register-form wrapper">
+            <div class="form p-2 rounded shadow bg-light" action="">
+                <h6>Set active user to:</h6>
+                @if (Model.Users.Count() == 0)
+                {
+                    <ul class="list-group mb-1">
+                        <li class="list-group-item d-flex justify-content-between align-items-center" onclick="resetFood()">
+                            <span onclick="resetFood()" id="FoodName">
+                                No users to train...
+                            </span>
+                        </li>
+                    </ul>
+                }
+                else
+                {
+                    <ul class="list-group mb-1">
+                        @foreach (var item in Model.Users)
+                        {
+                            @if (item.Id == Model.ActiveUserId)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-success">
+                                    <span>
+                                        @item.FullName - @Html.DisplayFor(modelItem => item.UserName)
+                                    </span>
+                                    <span>
+                                        ACTIVE
+                                    </span>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="btn list-group-item d-flex justify-content-between align-items-center" onclick="setActive('@item.Id')">
+                                    <span>
+                                        @item.FullName - @Html.DisplayFor(modelItem => item.UserName)
+                                    </span>
+                                    <form id="@item.Id" method="post">
+                                        <input asp-for="ActiveUserId" type="hidden" value="@item.Id" />
+                                        <span onclick="setActive('@item.Id')">
+                                            SELECT
+                                        </span>
+                                    </form>
+                                </li>
+                            }
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+
+@section Scripts {
+    <script>
+        function setActive(id) {
+            $("#" + id).submit();
+        }
+    </script>
+}

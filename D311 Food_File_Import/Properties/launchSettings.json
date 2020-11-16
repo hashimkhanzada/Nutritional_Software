@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "D311 Food_File_Import": {
+      "commandName": "Project",
+      "commandLineArgs": "--input \"FoodFiles/2018-01-foodfile.csv\" --output \"../../../Results/output.sql\""
+    }
+  }
+}

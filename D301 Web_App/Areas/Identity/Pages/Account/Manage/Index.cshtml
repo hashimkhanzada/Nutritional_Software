@@ -1,0 +1,465 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Goals";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+        <form id="profile-form" method="post">
+            <input asp-for="Input.Macros" type="hidden" class="form-control" />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <table class="table" style="margin-top:-1rem;">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Description</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Tracked</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="step1">
+                        <td><label asp-for="Input.WaterGoal"></label></td>
+                        <td class="step2">
+                            <input asp-for="Input.WaterGoal" class="form-control" />
+                            <span asp-validation-for="Input.WaterGoal" class="text-danger"></span>
+                        </td>
+                        <td class="step3"><input data-id="0" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                        <td><button id="update-profile-button" type="submit" class="btn btn-primary float-right">Save</button></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.EnegryGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.EnegryGoal" class="form-control" />
+                            <span asp-validation-for="Input.EnegryGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="1" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.EnegryNIPGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.EnegryNIPGoal" class="form-control" />
+                            <span asp-validation-for="Input.EnegryNIPGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="2" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.GoalUnit"></label></td>
+                        <td>
+                            <select asp-for="Input.GoalUnit" class="form-control">
+                                <option value="KJ">KJ (KiloJoule)</option>
+                                <option value="Calorie">Calorie (KiloCalorie)</option>
+                            </select>
+                            <span asp-validation-for="Input.GoalUnit" class="text-danger"></span>
+                        </td>
+                    <tr>
+                        <td><label asp-for="Input.ProteinGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.ProteinGoal" class="form-control" />
+                            <span asp-validation-for="Input.ProteinGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="3" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.FatGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.FatGoal" class="form-control" />
+                            <span asp-validation-for="Input.FatGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="4" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.CarbohydratesGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.CarbohydratesGoal" class="form-control" />
+                            <span asp-validation-for="Input.CarbohydratesGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="5" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.DietaryFibreGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.DietaryFibreGoal" class="form-control" />
+                            <span asp-validation-for="Input.DietaryFibreGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="6" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.SugarsGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.SugarsGoal" class="form-control" />
+                            <span asp-validation-for="Input.SugarsGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="7" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.StarchGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.StarchGoal" class="form-control" />
+                            <span asp-validation-for="Input.StarchGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="8" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.SFAGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.SFAGoal" class="form-control" />
+                            <span asp-validation-for="Input.SFAGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="9" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.MUFAGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.MUFAGoal" class="form-control" />
+                            <span asp-validation-for="Input.MUFAGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="10" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.PUFAGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.PUFAGoal" class="form-control" />
+                            <span asp-validation-for="Input.PUFAGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="11" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.AlphaLinolenicAcidGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.AlphaLinolenicAcidGoal" class="form-control" />
+                            <span asp-validation-for="Input.AlphaLinolenicAcidGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="12" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.LinoleicAcidGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.LinoleicAcidGoal" class="form-control" />
+                            <span asp-validation-for="Input.LinoleicAcidGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="13" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.CholesterolGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.CholesterolGoal" class="form-control" />
+                            <span asp-validation-for="Input.CholesterolGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="14" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.SodiumGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.SodiumGoal" class="form-control" />
+                            <span asp-validation-for="Input.SodiumGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="15" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.IodineGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.IodineGoal" class="form-control" />
+                            <span asp-validation-for="Input.IodineGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="16" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.PotassiumGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.PotassiumGoal" class="form-control" />
+                            <span asp-validation-for="Input.PotassiumGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="17" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.PhosphorusGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.PhosphorusGoal" class="form-control" />
+                            <span asp-validation-for="Input.PhosphorusGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="18" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+
+                        <td><label asp-for="Input.CalciumGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.CalciumGoal" class="form-control" />
+                            <span asp-validation-for="Input.CalciumGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="19" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.IronGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.IronGoal" class="form-control" />
+                            <span asp-validation-for="Input.IronGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="20" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.ZincGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.ZincGoal" class="form-control" />
+                            <span asp-validation-for="Input.ZincGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="21" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.SeleniumGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.SeleniumGoal" class="form-control" />
+                            <span asp-validation-for="Input.SeleniumGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="22" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.VitaminAGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.VitaminAGoal" class="form-control" />
+                            <span asp-validation-for="Input.VitaminAGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="23" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.BetaCaroteneGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.BetaCaroteneGoal" class="form-control" />
+                            <span asp-validation-for="Input.BetaCaroteneGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="24" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.ThiaminGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.ThiaminGoal" class="form-control" />
+                            <span asp-validation-for="Input.ThiaminGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="25" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.RiboflavinGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.RiboflavinGoal" class="form-control" />
+                            <span asp-validation-for="Input.RiboflavinGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="26" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.NiacinGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.NiacinGoal" class="form-control" />
+                            <span asp-validation-for="Input.NiacinGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="27" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.VitaminB6Goal"></label></td>
+                        <td>
+                            <input asp-for="Input.VitaminB6Goal" class="form-control" />
+                            <span asp-validation-for="Input.VitaminB6Goal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="28" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.VitaminB12Goal"></label></td>
+                        <td>
+                            <input asp-for="Input.VitaminB12Goal" class="form-control" />
+                            <span asp-validation-for="Input.VitaminB12Goal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="29" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.DietaryFolateGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.DietaryFolateGoal" class="form-control" />
+                            <span asp-validation-for="Input.DietaryFolateGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="30" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.VitaminCGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.VitaminCGoal" class="form-control" />
+                            <span asp-validation-for="Input.VitaminCGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="31" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.VitaminDGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.VitaminDGoal" class="form-control" />
+                            <span asp-validation-for="Input.VitaminDGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="32" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.VitaminEGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.VitaminEGoal" class="form-control" />
+                            <span asp-validation-for="Input.VitaminEGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="33" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                    <tr>
+                        <td><label asp-for="Input.AlcoholGoal"></label></td>
+                        <td>
+                            <input asp-for="Input.AlcoholGoal" class="form-control" />
+                            <span asp-validation-for="Input.AlcoholGoal" class="text-danger"></span>
+                        </td>
+                        <td><input data-id="34" type="checkbox" class="form-check-input m-2" onclick="setSelect(this)"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        //set initial checked boxes
+        let macros = $('#Input_Macros').val();
+        let macrosArr = macros.split(",");
+
+        $(".form-check-input").each(function () {
+            if (macros.includes($(this).data('id'))) {
+                $(this).prop("checked", true);
+            } else {
+                $(this).prop("checked", false);
+            }
+        });
+
+        function setSelect(identifier) {
+            var clickedID = $(identifier).data('id').toString();
+            if (macrosArr.includes(clickedID)) {
+                macrosArr.splice(macrosArr.indexOf(clickedID), 1); //unselecting a checkbox
+            } else {
+                macrosArr.push(clickedID); //selecting  a checkbox
+            }
+
+            //update csv macro values
+            macros = macrosArr.join(",");
+            $('#Input_Macros').val(macros);
+        }
+
+        function runTour() {
+            const tour = new Shepherd.Tour({
+                defaults: {
+                    classes: 'shepherd-theme-dark'
+                },
+                useModalOverlay: true
+            });
+
+            tour.addStep({
+                id: 'step1',
+                title: 'MANAGE GOALS',
+                text: 'Each row displayed here is a goal; here you can edit their values and choose whether they are tracked or not.',
+                cancelIcon: {
+                    enabled: true
+                },
+                canClickTarget: false,
+                modalOverlayOpeningPadding: 10,
+                modalOverlayOpeningRadius: 5,
+                attachTo: {
+                    element: '.step1',
+                    on: 'bottom'
+                },
+                classes: 'example-step-extra-class',
+                buttons: [
+                    {
+                        text: 'Next',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'step2',
+                title: 'CHANGE THE DATE',
+                text: 'Edit the text field here to set your goal.',
+                cancelIcon: {
+                    enabled: true
+                },
+                canClickTarget: false,
+                modalOverlayOpeningPadding: 10,
+                modalOverlayOpeningRadius: 5,
+                attachTo: {
+                    element: '.step2',
+                    on: 'bottom'
+                },
+                classes: 'example-step-extra-class',
+                buttons: [
+                    {
+                        secondary: true,
+                        text: 'Back',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'step3',
+                title: 'VIEW AND MANAGE YOUR INTAKES',
+                text: 'Check the checkbox to set the goal as tracked. Please note: you can only track three goals at a time.',
+                cancelIcon: {
+                    enabled: true
+                },
+                canClickTarget: false,
+                modalOverlayOpeningPadding: 10,
+                modalOverlayOpeningRadius: 5,
+                attachTo: {
+                    element: '.step3',
+                    on: 'bottom'
+                },
+                classes: 'example-step-extra-class',
+                buttons: [
+                    {
+                        secondary: true,
+                        text: 'Back',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'step4',
+                title: 'QUICK REPORT',
+                text: 'When you are finished setting the goals you want, click the Save button to apply your changes.',
+                cancelIcon: {
+                    enabled: true
+                },
+                canClickTarget: false,
+                modalOverlayOpeningPadding: 10,
+                modalOverlayOpeningRadius: 5,
+                attachTo: {
+                    element: '#update-profile-button',
+                    on: 'bottom'
+                },
+                classes: 'example-step-extra-class',
+                buttons: [
+                    {
+                        secondary: true,
+                        text: 'Back',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Finish',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.start()
+        }
+
+    </script>
+}

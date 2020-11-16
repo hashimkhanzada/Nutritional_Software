@@ -1,0 +1,66 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+    ViewData["ShowNav"] = false;
+}
+
+<div class="form-wrapper dark-background">
+    <div class="dark-background-title" id="main-section-title">WELCOME TO UCOL DIET PLAN</div>
+    <!-- Step Count -->
+    @*<ul class="form-steps py-4 rounded shadow bg-light"></ul>*@
+    @*asd*@
+    <!-- Register Form -->
+    <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="modal-content register-login-content">
+        <div class="modal-header">
+            <div class="modal-title register-login-title">Log In</div>
+        </div>
+        <div class="modal-body register-login-body form-carousel">
+            <section data-step="Sign-Up">
+                <div class="form-group w-100 px-1">
+                    <label asp-for="Input.Email"></label>
+                    <input asp-for="Input.Email" class="form-control" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="form-group w-100 px-1">
+                    <label asp-for="Input.Password"></label>
+                    <input asp-for="Input.Password" class="form-control" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <div class="form-group w-100 px-1">
+                    <div class="checkbox">
+                        <label asp-for="Input.RememberMe">
+                            <input asp-for="Input.RememberMe" />
+                            @Html.DisplayNameFor(m => m.Input.RememberMe)
+                        </label>
+                        <span class="text-danger">@Html.ValidationSummary(true)</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Form Controls -->
+        <div class="modal-body  register-login-body-2">
+            <span class="form-error flex-column text-danger order-1 pb-2"></span>
+            <div class="form-controls d-flex justify-content-between align-items-center">
+                <div class="d-flex flex-column">
+                    <span>
+                        <a class="btn-secondary" asp-page="./Register">Register</a>
+
+                    </span>
+                </div>
+                <div class="mb-1">
+
+                    <input class="large-button-gradient btn-tertiary" type="submit" value="Login" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

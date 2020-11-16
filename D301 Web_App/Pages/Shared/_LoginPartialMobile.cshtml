@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using D301_WebApp.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.AspNetCore.Http
+
+@if (SignInManager.IsSignedIn(User))
+{
+    string currentUserId = UserManager.GetUserAsync(User).Result.Id;
+    string currentUserfullName = UserManager.GetUserAsync(User).Result.FullName;
+    string activeUserId = Context.Session.GetString("activeUserId");
+    if (activeUserId == null)
+    {
+        Context.Session.SetString("activeUserId", currentUserId);
+        Context.Session.SetString("fullName", currentUserfullName);
+        activeUserId = currentUserId;
+    }
+    string fullName = Context.Session.GetString("fullName");
+
+    if (activeUserId != currentUserId)
+    {
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index"><span class="badge badge-pill badge-danger d-block d-sm-none">@fullName</span></a>
+    }
+    else
+    {
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index"><span class="badge badge-pill badge-dark d-block d-sm-none">@fullName</span></a>
+    }
+}
+
+

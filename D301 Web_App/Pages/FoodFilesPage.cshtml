@@ -1,0 +1,107 @@
+﻿@page
+@model D301_WebApp.Pages.FoodFilesPageModel
+@{
+    ViewData["Title"] = "Search Food";
+}
+<form>
+    <p>
+
+        Title: <input type="text" asp-for="SearchString" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+<table class="table">
+
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FoodList[0].Name)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model.FoodList)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <button id="btnOpen" class="btn btn-primary" data-id="@item.Id" data-toggle="modal" data-target="#foodModal">More info</button>
+
+                    <div class="modal fade" id="foodModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                <div class="modal-body">
+                    @*modal body*@
+
+                    <table class="table">
+
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.FoodList[0].Fat)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+
+                            <tr>
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Fat)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.DietaryFibre)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Calcium)
+                                </td>
+                                <td>
+                            </tr>>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                </div>
+                </div>
+                </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            //$("btnOpen").click(function () {
+            //    $("#foodModal").modal('show');
+            //})
+
+            $("btnOpen").click(function () {
+                $('.modal-body').load(`/food?id=${$(this).data('id')}`);
+            });
+
+            $("btnClose").click(function () {
+                $("#foodModal").modal('hide');
+            });
+    </script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+}

@@ -1,0 +1,15 @@
+﻿@page "{message?}"
+@model ErrorModel
+
+@{
+    ViewData["Title"] = Model.Code + " Error";
+}
+
+@if (Model.Message != null)
+{
+    <h2>@Model.Message</h2>
+}
+else
+{
+    <h2>No such page exists at this location.</h2>
+}

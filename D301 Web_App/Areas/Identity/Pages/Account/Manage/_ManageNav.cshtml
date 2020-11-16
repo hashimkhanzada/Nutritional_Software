@@ -1,0 +1,52 @@
+﻿@using D301_WebApp.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject ApplicationDbContext context
+@using Microsoft.AspNetCore.Http
+
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+    string currentUserId = UserManager.GetUserAsync(User).Result.Id;
+    string activeUserId = Context.Session.GetString("activeUserId");
+
+    List<ApplicationUser> Trainees = context.Users.Where(u => u.TrainerId == currentUserId).ToList();
+    bool isTrainer = (Trainees.Count > 0) ? true : false;
+
+    if (activeUserId == currentUserId)
+    {
+    <ul class="nav nav-tabs" id="tabContent" role="tablist" style="margin-right:20px;">
+        <li class="modal-tab"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="goals" asp-page="./Index">Goals</a></li>
+        <li class="modal-tab"><a class="nav-link @ManageNavPages.ProfileNavClass(ViewContext)" id="profile" asp-page="./Profile">Profile</a></li>
+        @*<li class="nav-item"><a class="nav-link text-dark @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">Email</a></li>*@
+        @*<li class="nav-item"><a class="nav-link text-dark @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Password</a></li>*@
+        @if (hasExternalLogins)
+        {
+            <li id="external-logins" class="nav-link"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">External logins</a></li>
+        }
+
+        @if (isTrainer)
+        {
+            <li class="modal-tab"><a class="nav-link @ManageNavPages.TraineesNavClass(ViewContext)" id="trainees" asp-page="./Trainees">Trainees</a></li>
+        }
+        else
+        {
+            <li class="modal-tab"><a class="nav-link @ManageNavPages.TrainerNavClass(ViewContext)" id="trainer" asp-page="./Trainer">Trainer</a></li>
+        }
+        @*<li class="nav-item"><a class="nav-link text-dark @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Two-factor authentication</a></li>*@
+        <li class="modal-tab"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Personal data</a></li>
+    </ul>
+    }
+    else
+    {
+<ul class="nav nav-tabs" id="tabContent" role="tablist" style="margin-right:20px;">
+    <li class="modal-tab"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="goals" asp-page="./Index">Goals</a></li>
+    <li class="modal-tab"><a class="nav-link @ManageNavPages.ProfileNavClass(ViewContext)" id="profile" asp-page="./Profile">Profile</a></li>
+</ul>
+
+
+    }
+}
+
+
+
+

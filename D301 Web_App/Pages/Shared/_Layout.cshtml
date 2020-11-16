@@ -1,0 +1,137 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using D301_WebApp.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.AspNetCore.Http
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Diet Plan</title>
+    @RenderSection("Styles", false)
+    <link rel="stylesheet" href="~/css/index.css" />
+    <link rel="stylesheet" href="~/lib/shepherd.js/dist/css/shepherd.css" />
+</head>
+
+
+<body>
+
+    @if (ViewData["ShowNav"] as bool? ?? true)
+    {<div class="left-nav">
+            <a data-placement="right" title="Home" class="navbar-brand large-button-gradient" id="navbarBrand" asp-area="" asp-page="/Index" onmousemove="mouseover('navbarBrand')">
+                <svg width="100%" height="100%" viewBox="0 0 360 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><use xlink:href="#_Image1" x="0" y="0" width="360px" height="360px" /><text x="32.927px" y="303.34px" style="font-family:'SegoeUIBlack', 'Segoe UI', sans-serif;font-weight:900;font-size:35.532px;fill:#24ca96;">UCOL DIET PLAN</text><path d="M151.695,97.832c7.103,0.877 14.742,-0.758 22.975,-5.201c-0.817,6.137 -0.877,12.81 -0.134,20.062c-3.997,-0.327 -7.995,-1.144 -11.993,-2.363c-30.762,-9.66 -52.638,9.779 -57.602,36.455l-3.967,0l-0.164,0c-1.144,0.104 -2.006,1.114 -1.932,2.258l2.764,35.444c0.03,1.13 0.966,2.036 2.111,2.036l6.063,0c1.025,2.333 2.184,4.652 3.477,6.94c7.386,12.974 16.333,26.334 30.213,38.476c13.197,9.452 24.818,8.159 35.563,2.303c8.545,4.057 17.581,5.662 27.27,2.021c1.442,-0.535 2.883,-1.248 4.325,-2.08l56.977,0c0.61,0 1.219,-0.268 1.635,-0.773c0.728,-0.892 0.594,-2.214 -0.297,-2.957l-18.889,-15.337l18.74,-14.118c0.565,-0.372 0.936,-1.025 0.936,-1.754c0,-1.159 -0.936,-2.11 -2.11,-2.11l-25.903,0l0.268,-0.505c1.709,-3.285 3.299,-6.673 4.711,-10.121l2.467,0c0.966,0 1.842,-0.668 2.05,-1.664l7.773,-35.429c0.044,-0.178 0.074,-0.357 0.074,-0.535c0,-1.159 -0.936,-2.11 -2.11,-2.11l-3.968,0c-1.992,-13.316 -9.214,-25.279 -24.328,-33.364c-9.11,-4.889 -20.493,-6.316 -34.924,-3.076c-3.432,1.174 -6.85,1.917 -10.283,2.274c0,-0.074 -0.015,-0.149 -0.015,-0.208c-1.204,-11.072 -0.357,-20.538 2.288,-28.578c2.586,-7.877 6.94,-14.445 12.811,-19.869c1.813,-1.665 1.917,-4.474 0.267,-6.287c-1.664,-1.813 -4.473,-1.917 -6.286,-0.267c-6.985,6.45 -12.157,14.266 -15.248,23.659c-0.401,1.218 -0.772,2.467 -1.099,3.745c-8.917,-15.827 -24.031,-24.016 -48.908,-20.211l-9.749,1.01c7.118,14.861 15.931,30.005 34.151,32.234Zm87.19,84.486l0,-8.174c0,-1.174 0.951,-2.11 2.11,-2.11c1.159,0 2.11,0.951 2.11,2.11l0,8.174l4.385,0l6.88,-31.313l-151.123,0l2.438,31.313l6.122,0l0,-12.395c0,-1.159 0.937,-2.11 2.111,-2.11c1.159,0 2.11,0.936 2.11,2.11l0,12.395l10.001,0l0,-8.174c0,-1.174 0.952,-2.11 2.111,-2.11c1.159,0 2.11,0.951 2.11,2.11l0,8.174l9.333,0l0,-12.395c0,-1.159 0.936,-2.11 2.11,-2.11c1.159,0 2.11,0.936 2.11,2.11l0,12.395l10.002,0l0,-8.174c0,-1.174 0.951,-2.11 2.11,-2.11c1.174,0 2.11,0.951 2.11,2.11l0,8.174l10.983,0l0,-12.395c0,-1.159 0.936,-2.11 2.11,-2.11c1.159,0 2.11,0.936 2.11,2.11l0,12.395l10.002,0l0,-8.174c0,-1.174 0.951,-2.11 2.11,-2.11c1.174,0 2.111,0.951 2.111,2.11l0,8.174l9.332,0l0,-12.395c0,-1.159 0.937,-2.11 2.111,-2.11c1.159,0 2.11,0.936 2.11,2.11l0,12.395l10.001,0l0,-8.174c0,-1.174 0.952,-2.11 2.111,-2.11c1.174,0 2.11,0.951 2.11,2.11l0,8.174l9.437,0l0,-12.395c0,-1.159 0.936,-2.11 2.11,-2.11c1.159,0 2.11,0.936 2.11,2.11l0,12.395l10.002,0Zm-103.419,4.205l-7.549,0c1.902,4.117 4.265,7.936 6.985,11.518c3.938,5.171 8.664,9.808 13.91,14.103c1.441,1.174 3.566,0.951 4.755,-0.491c1.174,-1.441 0.951,-3.566 -0.49,-4.755c-4.845,-3.953 -9.199,-8.233 -12.811,-12.959c-1.783,-2.348 -3.403,-4.815 -4.8,-7.416Zm125.904,14.847l-21.965,0c-5.484,9.451 -13.806,21.132 -22.812,28.622l45.133,0l-16.272,-13.211c-0.164,-0.119 -0.327,-0.268 -0.461,-0.446c-0.699,-0.922 -0.52,-2.244 0.416,-2.943l15.961,-12.022Z" style="fill:#24ca96;" /><defs><image id="_Image1" width="360px" height="360px" xlink:href="data:image/png;base64,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" /></defs></svg>
+
+            </a>
+
+            <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+            @*<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>*@
+
+
+            <partial name="_LoginPartial" />
+        </div>
+    }
+
+
+    @if (ViewData["ShowNav"] as bool? ?? true)
+    {
+        <header class="normal-header site-header">
+            <div class="header-item">UCOL DIET APPLICATION / @ViewData["Title"]</div>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                string currentUserId = UserManager.GetUserAsync(User).Result.Id;
+                string currentUserfullName = UserManager.GetUserAsync(User).Result.FullName;
+                string trainerId = UserManager.GetUserAsync(User).Result.TrainerId;
+
+                string activeUserId = Context.Session.GetString("activeUserId");
+                if (activeUserId == null)
+                {
+                    Context.Session.SetString("activeUserId", currentUserId);
+                    Context.Session.SetString("fullName", currentUserfullName);
+                    activeUserId = currentUserId;
+                }
+                string fullName = Context.Session.GetString("fullName");
+
+                bool isTrainer = (trainerId == null) ? true : false;
+
+                if (activeUserId == currentUserId)
+                {
+                    <div class="header-item header-item-end">LOGGED IN AS: @currentUserfullName </div>
+                }
+                else
+                {
+                    <div class="header-item header-item-end">CURRENTLY TRAINING: @currentUserfullName </div>
+                }
+
+            }
+            else
+            {
+                <div class="header-item header-item-end">LOG IN TO USE APPLICATION </div>
+            }
+
+        </header>
+
+        @if (ViewData["ShowHelp"] as bool? ?? true)
+        {
+            <button id="btn-help" class="help-button btn large-button-gradient" data-placement="top" onclick="runTour()" title="Click to run Tutorial">?</button>
+        }
+
+        <div id="main-section" class="main-section">
+
+            <div id="main-section-title">@ViewData["Title"]</div>
+            @RenderBody()
+
+            <div class="modal fade danger-modal" id="logoutModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirm Log Out</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to log out?
+                        </div>
+                        <div class="modal-footer">
+                            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                                <button type="submit" class="btn btn-danger">Log out</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<div class="background-container">
+                <footer class="border-top footer text-muted">
+                    <div class="container">
+                        &copy; 2020 - D301_WebApp - <a asp-area="" asp-page="/Privacy">Privacy</a>
+                    </div>
+                </footer>
+            </div>*@
+
+
+    }
+    else
+    {
+        @RenderBody()
+    }
+    <script src="~/lib/jquery/dist/jquery.min.js">
+    </script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js">
+    </script>
+    <script src="~/lib/popperjs/core/dist/umd/popper.min.js">
+    </script>
+    <script src="~/lib/shepherd.js/dist/js/shepherd.min.js">
+    </script>
+    @RenderSection("Scripts", required: false)
+    <script src="~/js/site.js" asp-append-version="true">
+    </script>
+
+
+</body>
+</html>

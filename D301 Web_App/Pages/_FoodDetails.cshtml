@@ -1,0 +1,65 @@
+﻿@model Intake
+<link href="@Url.Content("~/css/dashboard.css")" rel="stylesheet" />
+
+<div class="tableFixHead">
+    <table class="table table-striped">
+        <thead>
+            <tr style="background-color: #ced4da">
+                <th scope="col">Nutrient</th>
+                <th scope="col">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                @if (Model.FoodId != null)
+                {
+                    @foreach (var property in Model.Food.GetType().GetProperties())
+                    {
+                        @if (property.Name != "EnegryNIP" && typeof(Nutrient).GetProperty(property.Name) != null)
+                        {
+                            String displayValue = Model.CalculateValueToString((float)property.GetValue(Model.Food), Model.Food.Amount) + Unit.GetUnit(property.Name);
+                            <tr>
+                                <td scope="row">@property.Name</td>
+                                <td>@displayValue</td>
+                            </tr>
+                        }
+                    }
+                }
+                else if (Model.CustomFoodId != null)
+                {
+                    @foreach (var property in Model.CustomFood.GetType().GetProperties())
+                    {
+                        @if (property.Name != "EnegryNIP" && typeof(Nutrient).GetProperty(property.Name) != null)
+                        {
+                            String displayValue = Model.CalculateValueToString((float)property.GetValue(Model.CustomFood), Model.CustomFood.Amount) + Unit.GetUnit(property.Name);
+                            <tr>
+                                <td scope="row">@property.Name</td>
+                                <td>@displayValue</td>
+                            </tr>
+                        }
+                    }
+                }
+            }
+            //for the "view food nutrients" button on intake page
+            //starts off empty and may be filled one nutrient at a time as specified by getFoodDetails() in intake.js
+            else
+            {
+                Intake empty = new Intake();
+                empty.Food = new Food();
+
+                @foreach (var property in empty.Food.GetType().GetProperties())
+                {
+                    @if (property.Name != "EnegryNIP" && typeof(Nutrient).GetProperty(property.Name) != null)
+                    {
+                        String displayValue = empty.CalculateValueToString((float)property.GetValue(empty.Food), empty.Food.Amount);
+                        <tr>
+                            <td scope="row">@property.Name</td>
+                            <td><span id=@property.Name>@displayValue</span><span>@Unit.GetUnit(property.Name)</span></td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+</div>

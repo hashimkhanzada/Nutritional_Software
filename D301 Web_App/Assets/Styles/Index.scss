@@ -1,0 +1,19 @@
+﻿$bar-opacity: 0.2;
+$theme-colors: (
+// "primary"    : ,
+// "secondary"  : ,
+"success" : #55efc4, 
+"danger" : #ff4136,
+// "warning"    : ,
+// "info"       : ,
+"light" : #dfe6e9,
+// "dark"       :
+);
+
+@import "../Lib/bootstrap/scss/bootstrap";
+
+@import "./Base";
+@import "./Form";
+@import "./GoalBar";
+@import "./ProgressBar";
+@import "./Ripple";

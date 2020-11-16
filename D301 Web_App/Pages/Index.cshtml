@@ -1,0 +1,139 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "";
+}
+
+<div class="index-image-container">
+    <img src="img/index.jpg" class="index-image">
+
+
+
+</div>
+
+<div class="index-banner">
+    <div class="dark-background-title index-sub-title" id="main-section-title">WELCOME TO</div>
+    <div class="dark-background-title index-title " id="main-section-title">UCOL DIET PLAN</div>
+
+    <div class="index-buttons-container">
+        <a asp-area="" asp-page="/Report" role="button" class="btn btn-primary large-button-gradient index-button" id="btnReport" onmousemove="mouseover('btnReport')" style="float:left;">Report</a>
+        <a asp-area="" asp-page="/Dashboard" role="button" class="btn btn-primary large-button-gradient index-button" id="btnDashboard" onmousemove="mouseover('btnDashboard')" style="float:left;">Add your Intakes</a>
+        <a asp-area="" asp-page="/Export" role="button" class="btn btn-primary large-button-gradient index-button" id="btnExport" onmousemove="mouseover('btnExport')" style="float:left;">Export</a>
+    </div>
+</div>
+
+<div class="index-text-container">
+    <div class="index-text-margin">
+        <h1 class="modal-title register-login-title index-h">about this application</h1>
+        <p>
+            The purpose of our website is to be able to input your person's dietary intake and match both the overall intake against Recommended Dietary Intakes or Nutritional Requirements/Recommendations. Each food is inputted into the website individually – this involves a search of the database, selection of the food, and inputting of the quantity taken in.
+        </p>
+        <p>
+            In addition to putting in nutritional information, the database also required information such as age, gender, body weight and height, medical conditions/diet, etc… as these are factors that generally impact on your nutritional requirements.
+        </p>
+
+        <h1 class="modal-title register-login-title index-h">Food database and external api</h1>
+        <p id="text">Plant & Food Research and the Ministry of Health jointly own the New Zealand Food Composition Database, the most comprehensive collection of high-quality nutrient data for New Zealand foods. The Database is managed and maintained by dedicated Plant & Food Research staff.  — NZ Food Composition Data</p>
+        <p id="text">
+            For more information about New Zealand Food Composition Data, please
+            <a class="text-primary" href="https://www.foodcomposition.co.nz/foodfiles/"> Click Me </a>
+            to check it out.
+        </p>
+        <p id="text"> This application also uses an external API (Application Programming Interface) called FatSecret to fetch data from food and drink items that aren't present in the NZFOODFiles database. For more information about how this API works <a class="text-primary" href="https://platform.fatsecret.com/api/"> click here, </a> or view the UCOL Diet Plan documentation found below to find out more. </p>
+        
+        <h1 class="modal-title register-login-title index-h">What We Provide?  </h1>
+        <p id="text">As soon as you join, we will provide the following services to let you complete your Diet Goal!</p>
+        <ul id="text">
+            <li>Set up your own weight/diet goal.</li>
+            <li>Input your daily diet.</li>
+            <li>Analyse your daily diet.</li>
+            <li>Export your nutritional intake data from any range of days to a .CSV file.</li>
+        </ul>
+        <br />
+        <p id="text2">
+            Don't have an account yet? Sign Up now!
+            <a class="button button1 text-primary" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </p>
+        <h1 class="modal-title register-login-title index-h">help and documentation</h1>
+        <p>
+            For users, developers, and maintainers of this application we have created a Software Requirments document detailing application features and how to use / maintain them.
+        </p>
+        <a role="button" class="btn btn-primary large-button-gradient section-button" id="btnGoals" onmousemove="mouseover('btnGoals')" style="margin-left:auto; margin-right:auto; margin-top:40px; margin-bottom:100px; float:none !important;">Download Documentation (PDF)</a>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+        function runTour() {
+            const tour = new Shepherd.Tour({
+                defaults: {
+                    classes: 'shepherd-theme-dark'
+                },
+                useModalOverlay: true,
+                
+                
+            });
+
+            tour.addStep({
+                id: 'step1',
+                title: 'Further Help & Documentation',
+                text: 'For further help and documentation for this application, please download the .PDF Software Requirements document.',
+                scrollTo: true,
+                cancelIcon: {
+                    enabled: true
+                },
+                modalOverlayOpeningPadding: 10,
+                modalOverlayOpeningRadius: 5,
+                scrollToHandler: function (e) {
+                    $('html, body').animate({
+                        scrollTop: $(e).offset().top
+                    }, 1000);
+                },
+                attachTo: {
+                    element: '#btnGoals',
+                    on: 'top'
+                },
+                classes: 'example-step-extra-class',
+                buttons: [
+                    {
+                        text: 'Finish tutorial',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.start()
+
+            $(".shepherd-modal-overlay-container").onclick = function changeContent() {
+                console.log("hello");
+                }
+        }
+
+        $(".site-header").addClass("index-header");
+        $(".site-header").removeClass("normal-header");
+
+        $(window).scroll(function () {
+
+
+
+            var scroll = $(window).scrollTop();
+
+            if (scroll >= 580) {
+                $(".site-header").removeClass("index-header");
+                $(".site-header").addClass("normal-header");
+            } else {
+                $(".site-header").removeClass("normal-header");
+                $(".site-header").addClass("index-header");
+            }
+
+            $(".index-image").css("top", "0" + (scroll / 1.8) + "px");
+
+        });
+
+
+    </script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+
+}

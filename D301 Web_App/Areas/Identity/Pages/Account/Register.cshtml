@@ -1,0 +1,198 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+    ViewData["ShowNav"] = false;
+}
+
+<div class="dark-background">
+    <!-- Step Count -->
+    @*<ul class="form-steps py-4 rounded shadow bg-light"></ul>*@
+    <!-- Register Form -->
+    <div class="modal-content register-login-content" style="max-width:470px; max-height:940px; margin-top:80px;">
+        <div class="modal-header">
+            <div class="modal-title register-login-title">Create An Account</div>
+        </div>
+        <div class="modal-body register-login-body form-carousel" >
+            <div class="form-wrapper wrapper">
+                <!-- Step Count -->
+                <ul class="form-steps py-4 rounded shadow bg-light"></ul>
+
+                <!-- Register Form -->
+                <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form p-4 rounded shadow bg-light" style="margin-bottom:40px; overflow-y: auto; max-height:510px;">
+                    <h4 class="">Create An Account</h4>
+                    <h4 class="text-danger">@Html.ValidationMessage("Register Error")</h4>
+                    <div class="form-carousel">
+                        <!-- Section 1. Sign Up  -->
+                        <section class="current bg-transparent py-1" data-step="Sign-Up">
+                            <div class="form-group w-100 px-1">
+                                <label asp-for="Input.Email"></label>
+                                <input asp-for="Input.Email" class="form-control" />
+                                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-group w-100 px-1">
+                                <label asp-for="Input.Password"></label>
+                                <input asp-for="Input.Password" class="form-control" />
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-group w-100 px-1">
+                                <label asp-for="Input.ConfirmPassword"></label>
+                                <input asp-for="Input.ConfirmPassword" class="form-control" />
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </section>
+
+                        <!-- Section 2. Details -->
+                        <section class="bg-transparent py-2" data-step="Details">
+                            <div class="form-group w-100 px-1">
+                                <label asp-for="Input.FirstName"></label>
+                                <input asp-for="Input.FirstName" class="form-control" />
+                                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group w-100 px-1">
+                                <label asp-for="Input.LastName"></label>
+                                <input asp-for="Input.LastName" class="form-control" />
+                                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group w-100 px-1">
+                                <label asp-for="Input.DOB"></label>
+                                <input asp-for="Input.DOB" class="form-control" />
+                                <span asp-validation-for="Input.DOB" class="text-danger"></span>
+                            </div>
+                            <div class="form-group w-100 px-1">
+                                <label asp-for="Input.Gender"></label>
+                                <select asp-for="Input.Gender" class="form-control">
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                </select>
+                            </div>
+                            <div id="hidden-box" class="form-group w-100 px-1">
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" asp-for="Input.Pregnant" class="form-check-input" />
+                                    <label class="form-check-label" asp-for="Input.Pregnant"></label>
+                                    <span asp-validation-for="Input.Pregnant" class="text-danger"></span>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" asp-for="Input.Lactating" class="form-check-input" />
+                                    <label class="form-check-label" asp-for="Input.Lactating"></label>
+                                    <span asp-validation-for="Input.Lactating" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group w-100 px-1">
+                                <label asp-for="Input.Weight"></label>
+                                <div class="input-group">
+                                    <input asp-for="Input.Weight" class="form-control" />
+                                    <select asp-for="Input.WeightUnit" class="custom-select"
+                                            id="weight-unit"
+                                            style="flex: 0.33;">
+                                        <option value="kg" selected>kg - Kilograms</option>
+                                        <option value="lb">lb - Pounds</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="Input.Weight" class="text-danger"></span>
+                            </div>
+                            <div class="form-group w-100 px-1">
+                                <label asp-for="Input.Height"></label>
+                                <div class="input-group">
+                                    <input asp-for="Input.Height" class="form-control" />
+                                    <select asp-for="Input.HeightUnit" class="custom-select"
+                                            id="height-unit"
+                                            style="flex: 0.33;">
+                                        <option value="cm" selected>cm - Centimeter</option>
+                                        <option value="in">in - Inches</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="Input.Height" class="text-danger"></span>
+                            </div>
+                            <div class="form-group w-100 px-1">
+                                <label asp-for="Input.ActivityLevel"></label>
+                                <select asp-for="Input.ActivityLevel" class="form-control">
+                                    <option value="Sedentary">Sedentary</option>
+                                    <option value="LightlyActive">Lightly Active</option>
+                                    <option value="ModeratelyActive">Moderately Active</option>
+                                    <option value="VeryActive">Very Active</option>
+                                    <option value="ExtremelyActive">Extremely Active</option>
+                                </select>
+                            </div>
+                            <div class="form-group w-100 px-1">
+                                <label asp-for="Input.MedicalConditions"></label>
+                                <input asp-for="Input.MedicalConditions" class="form-control" />
+                                <span asp-validation-for="Input.MedicalConditions" class="text-danger"></span>
+                            </div>
+                            <div class="form-group w-100 px-1">
+                                <label asp-for="Input.GoalUnit"></label>
+                                <select asp-for="Input.GoalUnit" class="form-control">
+                                    <option value="KJ">KJ (KiloJoule)</option>
+                                    <option value="Calorie">Calorie (KiloCalorie)</option>
+                                </select>
+                                <span asp-validation-for="Input.GoalUnit" class="text-danger"></span>
+                            </div>
+                        </section>
+
+
+                        @*Section 3. Goals
+            <section class="bg-transparent py-2" data-step="Goals">
+
+                <div class="form-group w-100 px-1">
+                    <label asp-for="Input.Goal"></label>
+                    <div class="input-group">
+                        <input asp-for="Input.Goal" class="form-control" />
+                        <select asp-for="Input.GoalUnit" class="custom-select"
+                                id="enegry-goal-unit"
+                                style="flex: 0.33;">
+                            <option value="kj" selected>kj - Kilojoule</option>
+                            <option value="cal">cal - Calorie</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Input.Goal" class="text-danger"></span>
+                </div>
+            </section>*@
+
+
+
+                        <!-- Section 4. Confirm -->
+                        <section class="bg-transparent py-2" data-step="Confirm">
+                            By signing up you agree to the
+                            <a asp-page="/Privacy" class="text-primary" target="_blank">Terms of Service &amp; Privacy Policy.</a>
+                        </section>
+                    </div>
+
+                    <!-- Form Controls -->
+                    <div class="px-1">
+                        <span class="form-error flex-column text-danger order-1 pb-2"></span>
+                        <div class="form-controls d-flex justify-content-between">
+                            <span>
+                                <a class="btn-secondary" asp-page="./Login">Log in</a>
+                            </span>
+                            <div class="mb-1">
+                                <input class="prev-btn btn-secondary" type="button" value="Back" />
+                                <input class="next-btn large-button-gradient btn-tertiary" type="button" value="Continue" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Form Controls -->
+
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(function () {
+            $("#hidden-box").hide();
+
+            $("#Input_Gender").change(function () {
+                var selectedGender = $(this).children("option:selected").val();
+                if (selectedGender == "F") {
+                    $("#hidden-box").show();
+                }
+            })
+        });
+    </script>
+}

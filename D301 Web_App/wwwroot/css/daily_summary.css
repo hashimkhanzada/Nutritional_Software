@@ -1,0 +1,12 @@
+﻿#date {
+    text-align: center;
+    padding-bottom: 1em;
+}
+
+#date h2 {
+    display: inline-block;
+}
+
+#date button {
+    margin-bottom: 10px;
+}

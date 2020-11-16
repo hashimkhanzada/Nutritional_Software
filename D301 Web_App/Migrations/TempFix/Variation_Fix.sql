@@ -1,0 +1,1 @@
+UPDATE 'FoodVariation' SET name = replace(name,'"',"")

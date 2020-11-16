@@ -1,0 +1,388 @@
+﻿@page "{startdate?}/{stopdate?}"
+
+@model D301_WebApp.Pages.ExportIntakesModel
+@section Styles {
+    <link href="@Url.Content("~/css/daily_summary.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/css/dashboard.css")" rel="stylesheet" />
+}
+@{
+    ViewData["Title"] = "Export";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="flex-dashboard">
+        <div class="flex-column column-other" style="flex-basis: 70%">
+            <div id="section-title">EXPORT YOUR INTAKES FROM ANY RANGE OF DAYS</div>
+            <div class="flex-dashboard-dates column-other">
+                <div class="container-date column-other">
+                    <a class="large-button-gradient btn-tertiary" asp-page-handler="CSV" data-toggle="modal-intake" role="button" id="export-btn" title="Export intake data to a .CSV file" data-placement="left" onmousemove="mouseover('export-btn')"><span>Export Intakes</span></a>
+                    <a title="Move back a day" data-placement="top" asp-route-startdate=@Model.StartDate.AddDays(-1).ToString("yyyy-MM-dd") asp-route-stopdate=@Model.StopDate.ToString("yyyy-MM-dd") asp-for="StopDate" role="button" id="normalDateButton1" style="float:left;" class="btn btn-secondary mb-1 large-button-gradient" onmousemove="mouseover('normalDateButton1')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    </a>
+                    <div class="btn-secondary" style="float:left">From @Model.StartDate.ToString("dd MMMM yyyy")</div>
+                    @if (Model.StartDate >= Model.StopDate)
+                    {
+                        <a role="button" class="btn btn-secondary mb-1 disabled button-gradient" style="float:left;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </a>
+                    }
+                    else
+                    {
+                        <a title="Move forward a day" data-placement="top" asp-route-startdate=@Model.StartDate.AddDays(1).ToString("yyyy-MM-dd") asp-route-stopdate=@Model.StopDate.ToString("yyyy-MM-dd") asp-for="StopDate" role="button" id="normalDateButton2" style="float:left;" class="btn btn-secondary mb-1 large-button-gradient" onmousemove="mouseover('normalDateButton2')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </a>
+                    }
+
+
+                    @if (Model.StopDate <= Model.StartDate)
+                    {
+                        <a role="button" class="btn btn-secondary mb-1 disabled button-gradient" style="float:left;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        </a>
+                    }
+                    else
+                    {
+                        <a title="Move back a day" data-placement="top" asp-route-stopdate=@Model.StopDate.AddDays(-1).ToString("yyyy-MM-dd") asp-route-startdate=@Model.StartDate.ToString("yyyy-MM-dd") asp-for="StartDate" role="button" id="normalDateButton3" style="float:left;" class="btn btn-secondary mb-1 large-button-gradient" onmousemove="mouseover('normalDateButton3')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        </a>
+                    }
+                    <div class="btn-secondary" style="float:left">To @Model.StopDate.ToString("dd MMMM yyyy")</div>
+                    <a title="Move forward a day" data-placement="top" asp-route-stopdate=@Model.StopDate.AddDays(1).ToString("yyyy-MM-dd") asp-route-startdate=@Model.StartDate.ToString("yyyy-MM-dd") asp-for="StartDate" role="button" id="normalDateButton4" style="float:left;" class="btn btn-secondary mb-1 large-button-gradient" onmousemove="mouseover('normalDateButton4')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </a>
+                </div>
+            </div>
+
+            @if (Model.IntakeList.Count() == 0)
+            {
+                <div id="message" class="col-md border-top bg-white p-2 text-center column-other step2">
+                    <p>No intake for today!</p>
+                </div>
+            }
+            else
+            {
+
+                <div class="food-item-list-container">
+                    <div class="food-item-list column-other" id="foodItemListId">
+                        @foreach (var item in Model.IntakeList)
+                        {
+
+                            String dropdown = "dropdown" + item.Id.ToString();
+                            String gradient = "intakeitemgrad" + item.Id.ToString();
+                            String ServingCount = item.Quantity.ToString();
+
+                            <div class="dropdown-content-intake" id="@dropdown">
+                                <a id="dropdown-items" asp-page="./Intake" asp-route-id="@item.Id" asp-route-date="@item.Date.ToString("yyyy-MM-dd")"
+                                   onclick="hide()" role="button"><svg class="dropdown-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon></svg> EDIT ITEM</a>
+
+                                <a id="dropdown-items" onclick="hide()" type="button" data-id="@item.Id" asp-route-id="@item.Id" data-toggle="modal" data-target="#details-modal-@(item.Id)"><svg class="dropdown-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> DETAILS</a>
+
+                            </div>
+
+                            <div class="intake-item-container gradient tooltippy step2" id="@gradient" onmousemove="mouseover('@gradient')" onclick="toggle_visibility('@dropdown')" data-placement="top" title="Click to edit Intake Item">
+                                <div class="intake-item">
+
+                                    @if (item.MealType.ToString() == "Breakfast")
+                                    {
+                                        <svg version="1.1" class="food-svg" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 102.56" style="enable-background:new 0 0 122.88 102.56" xml:space="preserve"><g><path d="M102.27,58.85c0.23-0.79,1.06-1.24,1.85-1.01c0.79,0.23,1.24,1.06,1.01,1.85c-0.61,2.09-1.36,4.18-2.22,6.23 c-0.86,2.02-1.82,3.99-2.89,5.87c-0.41,0.71-1.31,0.96-2.03,0.56c-0.71-0.41-0.96-1.31-0.56-2.03c1.02-1.79,1.94-3.65,2.74-5.55 C100.97,62.84,101.68,60.86,102.27,58.85L102.27,58.85z M61.02,6.31c0.83-0.83,2.18-0.83,3.02,0c0.83,0.83,0.83,2.18,0,3.02 c-3.19,3.2-1.8,5.81-0.18,8.84c2.4,4.47,5.14,9.6,0.51,17.62c-0.59,1.02-1.89,1.36-2.91,0.78c-1.02-0.59-1.36-1.89-0.78-2.91 c3.45-5.97,1.3-9.98-0.58-13.48C57.69,15.64,55.6,11.74,61.02,6.31L61.02,6.31z M80.48,0.62c0.83-0.83,2.18-0.83,3.02,0 c0.83,0.83,0.83,2.18,0,3.02c-3.19,3.19-1.8,5.81-0.18,8.84c2.4,4.47,5.14,9.6,0.51,17.62c-0.59,1.02-1.89,1.36-2.91,0.78 c-1.02-0.59-1.36-1.89-0.78-2.91c3.45-5.97,1.3-9.98-0.58-13.48C77.14,9.95,75.05,6.05,80.48,0.62L80.48,0.62z M99.94,6.31 c0.83-0.83,2.18-0.83,3.02,0c0.83,0.83,0.83,2.18,0,3.02c-3.2,3.2-1.8,5.81-0.18,8.84c2.4,4.47,5.14,9.6,0.51,17.62 c-0.59,1.02-1.89,1.36-2.91,0.78c-1.02-0.59-1.36-1.89-0.78-2.91c3.45-5.97,1.3-9.98-0.58-13.48C96.6,15.64,94.51,11.74,99.94,6.31 L99.94,6.31z M2.21,22.54c-2.34-2.93-2.66-6.07-1.72-8.73c0.47-1.34,1.27-2.54,2.3-3.52C3.8,9.32,5.04,8.57,6.4,8.13 c2.85-0.92,6.22-0.52,9.19,2.01l0.05,0.04l38.1,32.61h67.14c1.1,0,1.99,0.89,1.99,1.99c0,0.08-0.01,0.16-0.01,0.24 c-0.51,12.13-3.33,22.71-9.13,31.31c-5.86,8.68-14.72,15.28-27.24,19.34c-0.03,0.01-0.07,0.02-0.1,0.03v6.01 c0,0.46-0.38,0.84-0.84,0.84H48.33c-0.6,0-1.09-0.49-1.09-1.09v-5.82c-0.12-0.04-0.23-0.1-0.34-0.16 c-11.49-5.43-19.59-12.58-24.96-21.13c-5.39-8.58-8-18.53-8.47-29.5c-0.05-1.09,0.8-2.02,1.9-2.07c0.03,0,0.06,0,0.09,0v-0.01 h10.41L2.5,22.84C2.39,22.75,2.3,22.65,2.21,22.54L2.21,22.54z M4.23,15.13c-0.5,1.42-0.3,3.14,0.99,4.82l26.44,22.57h15.67 L13.07,13.2l-0.04-0.03c-1.8-1.53-3.78-1.79-5.42-1.26c-0.79,0.25-1.5,0.69-2.09,1.25C4.95,13.71,4.5,14.38,4.23,15.13L4.23,15.13z M25.3,72.25c4.94,7.86,12.42,14.47,23.04,19.54h37.25c11.45-3.77,19.53-9.8,24.85-17.68c5.07-7.51,7.69-16.51,8.36-27.11H17.55 C18.22,56.48,20.64,64.83,25.3,72.25L25.3,72.25z M94.68,74.57c0.48-0.67,1.41-0.81,2.08-0.33c0.67,0.48,0.81,1.41,0.33,2.08 c-0.62,0.86-1.27,1.69-1.94,2.49c-0.65,0.78-1.34,1.54-2.06,2.27c-0.58,0.59-1.52,0.59-2.1,0.02c-0.59-0.58-0.59-1.52-0.02-2.1 c0.64-0.65,1.27-1.35,1.9-2.09C93.49,76.16,94.1,75.38,94.68,74.57L94.68,74.57z" /></g></svg>
+
+                                    }
+                                    else if (item.MealType.ToString() == "Lunch")
+                                    {
+                                        <svg version="1.1" class="food-svg" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 103.85" style="enable-background:new 0 0 122.88 103.85" xml:space="preserve"><g><path d="M63.97,63.46c0.39-2.74,1.67-5.2,3.54-7.06c2.26-2.26,5.39-3.67,8.85-3.67c3.46,0,6.58,1.4,8.85,3.67 c1.87,1.87,3.15,4.32,3.54,7.06h7.33c-0.59-4.36-2.65-8.25-5.66-11.16c-3.44-3.33-8.13-5.38-13.3-5.38 c-5.16,0-9.85,2.04-13.29,5.36c-3.02,2.91-5.08,6.81-5.67,11.18H63.97L63.97,63.46z M70.12,59.01c-1.19,1.19-2.05,2.73-2.4,4.45 h17.27c-0.35-1.72-1.21-3.26-2.4-4.45c-1.6-1.6-3.8-2.58-6.23-2.58C73.92,56.43,71.71,57.41,70.12,59.01L70.12,59.01z M12.06,14.04 c-1.02,0-1.85-0.83-1.85-1.85c0-1.02,0.83-1.85,1.85-1.85h1.55V7.7c0-2.1,0.82-4.01,2.13-5.4C17.09,0.88,18.95,0,21,0 c2.05,0,3.91,0.88,5.25,2.31c0.43,0.45,0.8,0.96,1.11,1.51c1.28-1.13,2.93-1.8,4.73-1.8c2.05,0,3.91,0.88,5.25,2.31 c1.32,1.39,2.13,3.3,2.13,5.4v0.63h5.37c0.12,0,0.25,0.01,0.36,0.04c1.91,0.3,3.78,0.98,5.58,2.11c1.56,0.98,3.08,2.3,4.53,4.01 l56.1-1.91c4.63-0.35,8.33,2.33,10.17,5.88c0.69,1.33,1.13,2.79,1.25,4.25c0.13,1.5-0.06,3.01-0.62,4.42 c-1.32,3.36-4.64,6.05-10.57,6.4c-0.08,0-0.16,0-0.23,0l-56.11-3.93c-1.45,1.8-2.95,3.24-4.5,4.26l-0.13,0.08 c-1.86,1.19-3.81,1.81-5.85,1.77v0.01h-5.37v5.3c3.76-0.85,7.69-0.72,11.39,0.31c3.93,1.09,7.6,3.18,10.52,6.19 c4.09-3.9,9.64-6.3,15.73-6.3c6.16,0,11.75,2.44,15.86,6.42c3.8,3.68,6.33,8.67,6.86,14.25c1.1,0.4,2.07,1.08,2.83,1.93l0.1,0.13 c1.02,1.21,1.64,2.77,1.64,4.46c0,1.26-0.34,2.45-0.94,3.47h2.28c1.85,0,3.54,0.76,4.76,1.98l0.01,0.01 c1.22,1.22,1.98,2.91,1.98,4.76c0,1.18-0.3,2.28-0.84,3.25h6.98c1.02,0,1.85,0.83,1.85,1.85c0,0.56-0.25,1.06-0.65,1.4 c-3.27,3.25-6.84,6.1-10.76,8.53c-3.95,2.45-8.25,4.48-12.92,6.04c-1.28,0.43-2.55,0.81-3.81,1.15c-1.26,0.34-2.58,0.66-3.96,0.95 c-0.13,0.03-0.25,0.04-0.38,0.04v0H33.68c-0.21,0-0.41-0.04-0.6-0.1c-1.46-0.35-2.8-0.7-4.01-1.05c-1.31-0.37-2.64-0.79-4-1.24 c-1.87-0.63-3.67-1.3-5.4-2.01c-1.76-0.73-3.43-1.49-5-2.29c-2.8-1.42-5.37-2.98-7.73-4.67c-2.36-1.7-4.49-3.52-6.4-5.47 c-0.71-0.73-0.7-1.89,0.02-2.61c0.36-0.35,0.83-0.53,1.29-0.53v-0.01h7.47c-0.54-0.96-0.84-2.07-0.84-3.25 c0-1.86,0.76-3.54,1.98-4.77l0.12-0.11c0.84-0.8,1.88-1.39,3.04-1.68V37.72h-2.03c-1.02,0-1.85-0.83-1.85-1.85s0.83-1.85,1.85-1.85 h2.03v-3.97h-1.9c-1.02,0-1.85-0.83-1.85-1.85s0.83-1.85,1.85-1.85h1.9v-4.65h-1.9c-1.02,0-1.85-0.83-1.85-1.85 c0-1.02,0.83-1.85,1.85-1.85h1.9v-3.97H12.06L12.06,14.04z M44.7,14.04h-5.24v3.97h3.18c1.02,0,1.85,0.83,1.85,1.85 c0,1.02-0.83,1.85-1.85,1.85h-3.18v4.65h3.47c1.02,0,1.85,0.83,1.85,1.85s-0.83,1.85-1.85,1.85h-3.47v3.97h5.37v0.01l0.04,0 c1.28,0.03,2.55-0.38,3.8-1.18l0.11-0.08c1.4-0.92,2.78-2.3,4.13-4.09c0.35-0.54,0.98-0.88,1.67-0.83l56.97,4 c4.16-0.28,6.4-1.97,7.23-4.05c0.34-0.86,0.45-1.81,0.37-2.76c-0.09-0.98-0.38-1.96-0.85-2.87c-1.22-2.35-3.63-4.13-6.62-3.9l0,0 l-57.16,1.95c-0.56,0.02-1.13-0.22-1.5-0.7c-1.36-1.72-2.76-2.99-4.19-3.89C47.49,14.78,46.11,14.28,44.7,14.04L44.7,14.04z M28.4,9.71c0,0.11-0.01,0.21-0.03,0.31v54c0.84-0.36,1.76-0.56,2.72-0.56h4.67V9.71c0-1.12-0.43-2.14-1.12-2.87 c-0.66-0.7-1.57-1.14-2.56-1.14c-0.99,0-1.9,0.43-2.56,1.13C28.83,7.57,28.4,8.59,28.4,9.71L28.4,9.71z M39.47,46.82v6.61 c1.48-0.51,3.05-0.76,4.62-0.76c2.25,0,4.52,0.51,6.55,1.51l0.1,0.05c1.93,0.97,3.63,2.39,4.85,4.22c0.79-2.24,1.92-4.32,3.33-6.18 c-2.48-2.63-5.64-4.46-9.03-5.4C46.49,45.95,42.87,45.9,39.47,46.82L39.47,46.82z M39.47,57.43v6.03h14.24 c-0.2-1.06-0.58-1.99-1.09-2.81c-0.85-1.35-2.09-2.4-3.52-3.12l-0.09-0.04c-1.5-0.74-3.21-1.12-4.91-1.12 C42.47,56.37,40.87,56.72,39.47,57.43L39.47,57.43z M17.31,36.13v37.76h7.76c-0.59-1.02-0.93-2.21-0.93-3.47 c0-0.46,0.05-0.91,0.13-1.35l0.02-0.08c0.09-0.41,0.22-0.82,0.38-1.21l0.01-0.03V7.7c0-1.12-0.43-2.14-1.12-2.87 C22.9,4.13,21.99,3.7,21,3.7c-0.99,0-1.9,0.43-2.56,1.13c-0.69,0.73-1.12,1.75-1.12,2.87V36.13L17.31,36.13z M28.23,68.87 c-0.03,0.06-0.06,0.12-0.09,0.18l-0.02,0.03l-0.04,0.1c-0.07,0.17-0.13,0.35-0.17,0.55l-0.01,0.06c-0.04,0.2-0.06,0.41-0.06,0.63 c0,0.9,0.37,1.71,0.96,2.3l0,0c0.59,0.59,1.41,0.96,2.31,0.96h66.34c0.89,0,1.71-0.37,2.3-0.96l0,0c0.59-0.59,0.96-1.41,0.96-2.31 c0-0.79-0.28-1.51-0.74-2.07l-0.08-0.08c-0.51-0.57-1.2-0.97-1.98-1.08c-17.72-2.1-46.53-0.02-66.8-0.02 c-0.63,0-1.22,0.18-1.71,0.48C28.91,67.93,28.5,68.36,28.23,68.87L28.23,68.87z M113.91,87.58H6.59c0.8,0.66,1.63,1.3,2.5,1.92 c2.19,1.57,4.6,3.03,7.23,4.37c1.52,0.77,3.1,1.5,4.75,2.18c1.65,0.68,3.37,1.32,5.17,1.92c1.18,0.39,2.46,0.79,3.84,1.18 c1.32,0.38,2.58,0.71,3.79,1.01h53.98c1.18-0.25,2.36-0.54,3.55-0.86c1.26-0.34,2.45-0.7,3.59-1.08c4.38-1.47,8.42-3.37,12.14-5.68 C109.52,91.05,111.78,89.39,113.91,87.58L113.91,87.58z M105.74,77.59H15.22c-0.8,0-1.53,0.31-2.08,0.82l-0.07,0.08 c-0.55,0.55-0.9,1.32-0.9,2.15c0,0.84,0.34,1.6,0.89,2.16c0.55,0.55,1.32,0.89,2.16,0.89h90.52c0.8,0,1.54-0.31,2.08-0.82 l0.07-0.08c0.55-0.55,0.9-1.31,0.9-2.15c0-0.84-0.34-1.6-0.89-2.16C107.34,77.93,106.58,77.59,105.74,77.59L105.74,77.59z" /></g></svg>
+                                    }
+                                    else if (item.MealType.ToString() == "Dinner")
+                                    {
+                                        <svg version="1.1" class="food-svg" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 111.69" style="enable-background:new 0 0 122.88 111.69" xml:space="preserve"><g><path d="M25.66,19.3c-0.4,0.4-0.93,0.6-1.45,0.6c-0.53,0-1.05-0.2-1.45-0.6c-0.4-0.4-0.6-0.93-0.6-1.45c0-0.53,0.2-1.05,0.6-1.45 c0.73-0.73,0.94-1.39,0.86-2.02c-0.08-0.69-0.47-1.43-0.9-2.22c-0.74-1.39-1.54-2.87-1.79-4.67c-0.26-1.82,0.04-3.91,1.51-6.45 L22.45,1c0.28-0.47,0.73-0.79,1.22-0.93c0.5-0.14,1.06-0.08,1.55,0.2c0.49,0.28,0.82,0.74,0.96,1.24c0.14,0.5,0.08,1.06-0.2,1.55 c-0.9,1.57-1.07,2.87-0.9,4.01c0.18,1.15,0.73,2.18,1.25,3.14c0.77,1.43,1.48,2.76,1.57,4.23C28,15.95,27.45,17.51,25.66,19.3 L25.66,19.3z M14.09,42.76h94.51c0.38,0,0.75,0.08,1.09,0.22c0.33,0.14,0.62,0.33,0.88,0.57c0.02,0.01,0.04,0.03,0.06,0.05 c0.52,0.52,0.84,1.23,0.84,2.02v6.37h9.36c0.57,0,1.08,0.23,1.45,0.6l0,0c0.37,0.37,0.6,0.89,0.6,1.45c0,0.57-0.23,1.08-0.6,1.45 l-0.03,0.03c-0.37,0.35-0.87,0.57-1.42,0.57h-9.36v42.1c0,1.82-0.37,3.56-1.03,5.15c-0.69,1.65-1.69,3.14-2.93,4.38 c-1.24,1.24-2.73,2.25-4.38,2.93c-1.59,0.66-3.33,1.03-5.15,1.03H24.73c-1.82,0-3.56-0.37-5.15-1.03 c-1.65-0.69-3.14-1.69-4.38-2.94c-1.24-1.24-2.25-2.73-2.94-4.38c-0.66-1.59-1.03-3.33-1.03-5.15V56.11H2.06 c-0.57,0-1.08-0.23-1.45-0.6C0.23,55.13,0,54.62,0,54.05c0-0.57,0.23-1.08,0.6-1.45l0,0c0.37-0.37,0.89-0.6,1.45-0.6h9.18v-6.37 c0-0.38,0.08-0.75,0.22-1.09c0.15-0.35,0.36-0.67,0.62-0.93C12.59,43.09,13.31,42.76,14.09,42.76L14.09,42.76z M107.35,46.88h-92 v51.32c0,1.27,0.25,2.47,0.71,3.58c0.48,1.15,1.18,2.18,2.05,3.05c0.87,0.87,1.9,1.57,3.05,2.05c1.1,0.46,2.31,0.71,3.58,0.71 h73.25c1.26,0,2.47-0.25,3.57-0.71c1.14-0.48,2.18-1.18,3.05-2.04c0.87-0.87,1.57-1.9,2.04-3.05c0.46-1.1,0.71-2.31,0.71-3.57 V46.88L107.35,46.88z M20.06,53.85c0-0.57,0.23-1.08,0.6-1.45c0.37-0.37,0.89-0.6,1.45-0.6c0.57,0,1.08,0.23,1.45,0.6 c0.37,0.37,0.6,0.89,0.6,1.45v27.09c0,0.57-0.23,1.08-0.6,1.45c-0.37,0.37-0.89,0.6-1.45,0.6c-0.57,0-1.08-0.23-1.45-0.6 l-0.03-0.03c-0.35-0.37-0.57-0.87-0.57-1.42V53.85L20.06,53.85z M40.3,25.44c-3.54,0.51-6.72,1.16-9.54,1.93 c-2.83,0.78-5.32,1.69-7.46,2.73c-1.5,0.73-2.83,1.52-3.98,2.37c-0.81,0.59-1.53,1.22-2.17,1.87h88.43 c-0.59-0.62-1.27-1.21-2.03-1.77c-1.11-0.81-2.4-1.56-3.86-2.24c-2.08-0.98-4.5-1.82-7.21-2.56c-2.73-0.74-5.75-1.35-9.01-1.86 c-1.48-0.23-2.98-0.44-4.49-0.63l-0.02,0c-1.49-0.19-2.99-0.35-4.51-0.5c-1.49-0.14-3-0.27-4.54-0.37 c-1.52-0.1-3.03-0.18-4.53-0.24c-0.57-0.02-1.07-0.27-1.43-0.65c-0.36-0.38-0.57-0.9-0.55-1.47l0-0.01 c0.01-0.33,0.1-0.64,0.25-0.91c0.15-0.28,0.37-0.51,0.63-0.7c0.32-0.24,0.62-0.51,0.88-0.82c0.26-0.3,0.48-0.64,0.66-0.99 c0.18-0.35,0.32-0.72,0.41-1.13c0.09-0.39,0.14-0.79,0.14-1.21c0-0.7-0.14-1.36-0.39-1.96c-0.26-0.62-0.64-1.19-1.11-1.66 c-0.47-0.47-1.04-0.86-1.66-1.11c-0.6-0.25-1.26-0.39-1.96-0.39c-0.7,0-1.36,0.14-1.96,0.39c-0.63,0.26-1.19,0.64-1.66,1.12 c-0.47,0.47-0.86,1.04-1.11,1.66l0,0c-0.25,0.6-0.39,1.26-0.39,1.96c0,0.41,0.05,0.81,0.13,1.19c0.09,0.39,0.23,0.77,0.4,1.11 c0.18,0.35,0.4,0.69,0.65,0.99c0.26,0.31,0.55,0.59,0.87,0.82c0.45,0.34,0.73,0.83,0.8,1.35c0.07,0.52-0.05,1.07-0.39,1.52 c-0.2,0.26-0.44,0.46-0.71,0.6c-0.26,0.13-0.55,0.21-0.84,0.22l-0.06,0l-0.04,0c-1.37,0.03-2.77,0.08-4.18,0.15 c-1.39,0.07-2.8,0.16-4.25,0.28c-1.4,0.11-2.79,0.24-4.15,0.4C42.99,25.07,41.64,25.24,40.3,25.44L40.3,25.44z M21.51,26.4 c2.34-1.13,5.03-2.12,8.08-2.96c3.03-0.84,6.41-1.53,10.13-2.07c1.39-0.2,2.79-0.38,4.2-0.54c1.43-0.16,2.84-0.3,4.26-0.41 c0.87-0.07,1.78-0.13,2.71-0.19c0.64-0.04,1.3-0.07,1.96-0.1c-0.25-0.55-0.45-1.13-0.59-1.72c-0.16-0.68-0.25-1.39-0.25-2.12 c0-1.25,0.25-2.44,0.7-3.53c0.47-1.13,1.16-2.15,2.01-3c0.85-0.85,1.87-1.54,3-2c1.09-0.45,2.28-0.7,3.53-0.7s2.44,0.25,3.53,0.7 c1.13,0.47,2.15,1.16,3,2c0.85,0.85,1.54,1.87,2.01,3c0.45,1.09,0.7,2.28,0.7,3.53c0,0.74-0.09,1.46-0.26,2.16 c-0.15,0.63-0.37,1.24-0.65,1.82c0.76,0.05,1.5,0.1,2.22,0.16c0.97,0.07,1.98,0.16,3.02,0.26c1.55,0.15,3.09,0.32,4.64,0.52 c1.55,0.19,3.09,0.41,4.62,0.65c3.47,0.54,6.66,1.2,9.54,1.98c2.9,0.79,5.51,1.71,7.79,2.78c2.38,1.11,4.41,2.39,6.05,3.85 c1.66,1.47,2.92,3.12,3.77,4.97c0.07,0.14,0.13,0.29,0.17,0.46c0.04,0.16,0.06,0.32,0.06,0.49c0,0.57-0.23,1.08-0.6,1.45 l-0.03,0.03c-0.37,0.35-0.87,0.57-1.42,0.57H13.09c-0.04,0-0.07,0-0.1-0.01c-0.13-0.01-0.27-0.03-0.39-0.06 c-0.14-0.04-0.28-0.09-0.42-0.16c-0.03-0.01-0.06-0.03-0.09-0.05c-0.47-0.27-0.8-0.7-0.95-1.19c-0.15-0.49-0.12-1.03,0.13-1.51 c0.01-0.03,0.03-0.06,0.05-0.09c0.98-1.81,2.31-3.47,4.01-4.97C17.02,28.92,19.08,27.58,21.51,26.4L21.51,26.4z M81.61,16.39 c0.4,0.4,0.6,0.93,0.6,1.45c0,0.53-0.2,1.05-0.6,1.45c-0.4,0.4-0.93,0.6-1.45,0.6c-0.53,0-1.05-0.2-1.45-0.6 c-1.79-1.79-2.34-3.35-2.25-4.85c0.09-1.47,0.81-2.8,1.57-4.23c1-1.88,2.15-4.02,0.35-7.15l-0.02-0.04 c-0.27-0.48-0.32-1.03-0.18-1.52c0.14-0.51,0.47-0.96,0.96-1.24c0.49-0.28,1.05-0.34,1.55-0.2c0.51,0.14,0.96,0.47,1.24,0.96 c1.47,2.54,1.77,4.63,1.51,6.44c-0.26,1.8-1.05,3.29-1.79,4.67l0,0C80.85,13.65,80.16,14.94,81.61,16.39L81.61,16.39z M97.11,16.39 c0.4,0.4,0.6,0.93,0.6,1.45c0,0.53-0.2,1.05-0.6,1.45c-0.4,0.4-0.93,0.6-1.45,0.6c-0.53,0-1.05-0.2-1.45-0.6 c-1.79-1.79-2.34-3.35-2.25-4.85c0.09-1.47,0.81-2.8,1.57-4.23c0.51-0.96,1.07-1.99,1.25-3.14c0.18-1.14,0.01-2.44-0.9-4.01 c-0.28-0.49-0.34-1.05-0.2-1.55c0.14-0.51,0.47-0.96,0.96-1.24c0.49-0.28,1.05-0.34,1.55-0.2c0.5,0.14,0.96,0.47,1.24,0.96 c1.47,2.54,1.77,4.63,1.51,6.44c-0.26,1.8-1.05,3.29-1.79,4.67c-0.42,0.79-0.82,1.53-0.9,2.22C96.17,15.01,96.38,15.66,97.11,16.39 L97.11,16.39z M41.16,19.3c-0.4,0.4-0.93,0.6-1.45,0.6c-0.53,0-1.05-0.2-1.45-0.6c-0.4-0.4-0.6-0.93-0.6-1.45 c0-0.53,0.2-1.05,0.6-1.45c1.46-1.46,0.77-2.75-0.04-4.25c-0.74-1.39-1.54-2.87-1.79-4.68c-0.26-1.82,0.04-3.91,1.51-6.45 c0.28-0.49,0.74-0.82,1.25-0.95c0.51-0.13,1.06-0.08,1.55,0.21c0.49,0.28,0.82,0.74,0.95,1.25c0.13,0.51,0.08,1.06-0.21,1.55 c-1.8,3.12-0.65,5.27,0.35,7.14l0,0c0.77,1.43,1.48,2.76,1.57,4.23C43.5,15.95,42.94,17.51,41.16,19.3L41.16,19.3z" /></g></svg>
+                                    }
+                                    else
+                                    {
+                                        <svg version="1.1" class="food-svg" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 88.78 122.88" style="enable-background:new 0 0 88.78 122.88" xml:space="preserve"><g><path d="M53.66,29.93c-0.46,0.09-0.94,0.1-1.42,0H19.88c-0.09,0-1.27-0.01-2.33-0.02c-4.66-0.05-5.32-0.06-7.76,3.96l-3.93,6.48 c-0.16,0.27-0.31,0.48-0.47,0.73c-0.21,0.31-0.46,0.69-0.68,1.03h79.2l-0.13-0.19c-0.02-0.02-0.03-0.05-0.05-0.08 c-0.06-0.09-0.12-0.18-0.17-0.25l-5.82-8.99l0,0c-1.94-2.73-4.51-2.71-8.99-2.68c-1.14,0.01-0.94,0.02-1.66,0.02H53.66L53.66,29.93 z M49.52,25.71l0.01-0.03l3.12-13.16c0.25-1.05,0.94-1.88,1.84-2.33l17.36-9.74c1.69-0.95,3.83-0.35,4.78,1.35 c0.95,1.69,0.35,3.83-1.35,4.78l-16.15,9.06l-2.39,10.07h10.34c1.88,0,1.56,0,1.65,0c5.87-0.04,9.24-0.06,12.43,4.45 c0.04,0.05,0.07,0.1,0.1,0.15l5.82,8.99c0.05,0.07,0.09,0.14,0.14,0.21c0.02,0.03,0.04,0.06,0.06,0.09 c0.63,0.94,1.49,2.24,1.49,3.6c0,1.82-0.95,3.14-3.84,3.14h-3.4l-7.82,59.84c-0.09,0.7-0.16,1.45-0.24,2.21 c-0.4,4.05-0.83,8.49-4.07,11.44c-3.57,3.24-8.85,3.12-13.38,3.01c-0.57-0.01-1.13-0.03-2.12-0.03H27.64v-0.01 c-3.98,0.11-7.06-0.91-9.24-3.03l-0.1-0.1c-0.03-0.03-0.07-0.07-0.1-0.1c-0.03-0.03-0.07-0.07-0.1-0.1l-0.1-0.1l-0.09-0.1 l-0.09-0.11c-0.03-0.04-0.06-0.07-0.09-0.11l-0.09-0.11l-0.09-0.11l-0.09-0.11l-0.09-0.11l-0.08-0.11l-0.08-0.12l-0.08-0.12 l-0.08-0.12l-0.08-0.12l-0.08-0.12l-0.08-0.12h0l-0.07-0.12l-0.07-0.13l-0.07-0.13l0,0l-0.07-0.13l-0.07-0.13l-0.07-0.13 l-0.07-0.13l-0.06-0.13l0,0l-0.06-0.14l-0.06-0.14l-0.06-0.14l-0.06-0.14h0l-0.06-0.14l-0.06-0.14l-0.05-0.14l-0.05-0.15 l-0.05-0.15l-0.05-0.15h0l-0.05-0.15l-0.05-0.15l-0.05-0.15l-0.04-0.15l0,0l-0.04-0.16l-0.04-0.16h0l-0.04-0.16h0l-0.04-0.16l0,0 l-0.04-0.16l-0.04-0.16l0,0l-0.03-0.16h0l-0.03-0.16l-0.03-0.17l0,0l-0.03-0.17h0l-0.03-0.17l-0.03-0.17l0,0l-0.03-0.17h0 l-0.02-0.17l0,0l-0.02-0.17h0l-0.02-0.18l0,0l-0.02-0.18l-0.02-0.18h0l-0.02-0.18l-0.02-0.18l-0.02-0.18l-0.01-0.18l-0.01-0.19 l-0.01-0.19L13.72,102c-0.02-0.11-0.04-0.23-0.05-0.35L6.44,46.33H3.81C0.98,46.33,0,45,0,43.1c0-1.57,1.11-3.22,1.89-4.37 c0.17-0.25,0.32-0.48,0.37-0.56l3.93-6.48c3.68-6.07,4.64-6.06,11.39-5.99c0.33,0,0.69,0.01,2.3,0.01H49.52L49.52,25.71z M77.29,46.36h-66.6l6.94,53.08h52.73L77.29,46.36L77.29,46.36z M18.18,103.66l0.85,6.5c0.01,0.06,0.01,0.11,0.02,0.17l0,0 c0.15,2.94,0.91,5.1,2.29,6.43c1.35,1.31,3.42,1.93,6.24,1.84l0.07,0v-0.01H53.9c0.39,0,1.29,0.02,2.22,0.04 c3.75,0.09,8.12,0.19,10.45-1.92c2.05-1.86,2.4-5.45,2.72-8.72c0.08-0.81,0.16-1.6,0.26-2.36l0.26-1.97H18.18L18.18,103.66z" /></g></svg>
+                                    }
+
+                                    <p class="food-item-count">@ServingCount</p>
+                                    <div class="intake-info">
+
+
+                                        @if (item.CustomFoodId != null)
+                                        {
+                                            <p class="food-item-title">@Html.DisplayFor(modelItem => item.CustomFood.Name)</p>
+                                        }
+                                        else
+                                        {
+                                            <p class="food-item-title">@Html.DisplayFor(modelItem => item.Food.Name)</p>
+                                        }
+                                        <div class="text-muted">
+                                            @if (item.CustomFoodId != null)
+                                            {
+                                                <small>
+                                                    @{
+                                                        String Energy = Math.Round((item.Amount * item.CustomFood.Enegry) / item.CustomFood.Amount * item.Quantity) + Model.AbrevGoalUnit;
+                                                        String Amount = item.Amount.ToString() + "g"; /*change to unit the user chose*/
+                                                        String Serving = item.Quantity == 1 ? item.Quantity.ToString() + " serving" : item.Quantity.ToString() + " servings";
+                                                    }
+                                                    <p class="food-item-desc">@item.MealType - @Serving of @Amount - @Energy</p>
+                                                </small>
+
+
+                                            }
+                                            else if (item.FoodId != null)
+                                            {
+                                                <small>
+                                                    @{
+                                                        String Energy = Math.Round((item.Amount * item.Food.Enegry) / item.Food.Amount * item.Quantity) + Model.AbrevGoalUnit;
+                                                        String Amount = item.Amount.ToString() + "g"; /*change to unit the user chose*/
+                                                        String Serving = item.Quantity == 1 ? item.Quantity.ToString() + " serving" : item.Quantity.ToString() + " servings";
+                                                    }
+                                                    <p class="food-item-desc">@item.MealType - @Serving of @Amount - @Energy</p>
+                                                </small>
+                                            }
+
+                                        </div>
+                                    </div>
+
+                                    <div class="food-item-dots">. . .</div>
+
+                                    @if (item.CustomFoodId != null)
+                                    {
+                                        String Energy = Math.Round((item.Amount * item.CustomFood.Enegry) / item.CustomFood.Amount * item.Quantity) + "";
+
+                                        <div class="kj-cal-count">
+                                            <p class="food-item-title">@Energy</p>
+                                            <small><p class="food-item-desc">@Model.SelectedGoalUnit</p></small>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        String Energy = Math.Round((item.Amount * item.Food.Enegry) / item.Food.Amount * item.Quantity) + "";
+
+                                        <div class="kj-cal-count">
+                                            <p class="food-item-title">@Energy</p>
+                                            <small><p class="food-item-desc">@Model.SelectedGoalUnit</p></small>
+
+                                        </div>
+                                    }
+
+
+
+
+
+
+                                </div>
+
+
+                            </div>
+
+
+
+
+                            @*//Details modal*@
+                            <div class="modal fade" tabindex="-1" role="dialog" id="details-modal-@(item.Id)">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            @if (item.CustomFoodId != null)
+                                            {
+                                                <h5 class="modal-title">@item.CustomFood.Name</h5>
+                                            }
+                                            else if (item.FoodId != null)
+                                            {
+                                                <h5 class="modal-title">@item.Food.Name</h5>
+                                            }
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="detailsbody modal-body">
+                                            <div class="form pt-2 pl-2 pr-2 pb-2 rounded shadow bg-light">
+                                                <div class="tableFixHead">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr style="background-color: #ced4da">
+                                                                <th scope="col">Nutrient</th>
+                                                                <th scope="col">Amount</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (item.FoodId != null)
+                                                            {
+                                                                @foreach (var property in item.Food.GetType().GetProperties())
+                                                                {
+                                                                    @if (property.Name != "EnegryNIP" && typeof(Nutrient).GetProperty(property.Name) != null)
+                                                                    {
+                                                                        if (property.Name == "Enegry")
+                                                                        {
+                                                                            String displayValue = item.CalculateValueToString((float)property.GetValue(item.Food), item.Food.Amount) + Model.AbrevGoalUnit;
+
+                                                                            <tr>
+                                                                                <td scope="row">@property.Name</td>
+                                                                                <td>@displayValue</td>
+                                                                            </tr>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            String displayValue = item.CalculateValueToString((float)property.GetValue(item.Food), item.Food.Amount) + Unit.GetUnit(property.Name);
+
+                                                                            <tr>
+                                                                                <td scope="row">@property.Name</td>
+                                                                                <td>@displayValue</td>
+                                                                            </tr>
+                                                                        }
+
+
+                                                                    }
+                                                                }
+                                                            }
+                                                            else if (item.CustomFoodId != null)
+                                                            {
+                                                                @foreach (var property in item.CustomFood.GetType().GetProperties())
+                                                                {
+                                                                    @if (property.Name != "EnegryNIP" && typeof(Nutrient).GetProperty(property.Name) != null)
+                                                                    {
+                                                                        if (property.Name == "Enegry")
+                                                                        {
+                                                                            String displayValue = item.CalculateValueToString((float)property.GetValue(item.CustomFood), item.CustomFood.Amount) + Model.AbrevGoalUnit;
+                                                                            <tr>
+                                                                                <td scope="row">@property.Name</td>
+                                                                                <td>@displayValue</td>
+                                                                            </tr>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            String displayValue = item.CalculateValueToString((float)property.GetValue(item.CustomFood), item.CustomFood.Amount) + Unit.GetUnit(property.Name);
+                                                                            <tr>
+                                                                                <td scope="row">@property.Name</td>
+                                                                                <td>@displayValue</td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        }
+                    </div>
+                </div>
+            }
+
+
+
+        </div>
+
+    </div>
+}
+else
+{
+    <p>You must be logged in to see this page!</p>
+}
+
+
+@section Scripts {
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script>
+        function runTour() {
+            const tour = new Shepherd.Tour({
+                defaults: {
+                    classes: 'shepherd-theme-dark'
+                },
+                useModalOverlay: true
+            });
+
+            tour.addStep({
+                id: 'step1',
+                title: 'CHANGE THE DATE',
+                text: 'These buttons are your date navigation. The buttons with the arrows let you move forward or back a day.',
+                cancelIcon: {
+                    enabled: true
+                },
+                canClickTarget: false,
+                modalOverlayOpeningPadding: 10,
+                modalOverlayOpeningRadius: 5,
+                attachTo: {
+                    element: '.container-date',
+                    on: 'bottom'
+                },
+                classes: 'example-step-extra-class',
+                buttons: [
+                    {
+                        secondary: true,
+                        text: 'Back',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'step2',
+                title: 'INTAKES',
+                text: 'Here you will be able to see all the collective Intake items from the range of days you have selected.',
+                cancelIcon: {
+                    enabled: true
+                },
+                canClickTarget: false,
+                modalOverlayOpeningPadding: 10,
+                modalOverlayOpeningRadius: 5,
+                attachTo: {
+                    element: '.step2',
+                    on: 'bottom'
+                },
+                classes: 'example-step-extra-class',
+                buttons: [
+                    {
+                        secondary: true,
+                        text: 'Back',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Next',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.addStep({
+                id: 'step3',
+                title: 'EXPORT INTAKES',
+                text: 'And finally, you can click here to export the shown intakes as a .CSV file to use in Microsoft Excel/Word.',
+                cancelIcon: {
+                    enabled: true
+                },
+                canClickTarget: false,
+                modalOverlayOpeningPadding: 10,
+                modalOverlayOpeningRadius: 5,
+                attachTo: {
+                    element: '#export-btn',
+                    on: 'bottom'
+                },
+                classes: 'example-step-extra-class',
+                buttons: [
+                    {
+                        secondary: true,
+                        text: 'Back',
+                        action: tour.back
+                    },
+                    {
+                        text: 'Finish',
+                        action: tour.next
+                    }
+                ]
+            });
+
+            tour.start()
+        }
+    </script>
+}

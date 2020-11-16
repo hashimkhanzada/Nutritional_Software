@@ -1,0 +1,162 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using D301_WebApp.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.AspNetCore.Http
+
+
+<ul class="navbar-nav">
+
+    @if (SignInManager.IsSignedIn(User))
+    {
+        string currentUserId = UserManager.GetUserAsync(User).Result.Id;
+        string currentUserfullName = UserManager.GetUserAsync(User).Result.FullName;
+        string trainerId = UserManager.GetUserAsync(User).Result.TrainerId;
+
+        string activeUserId = Context.Session.GetString("activeUserId");
+        if (activeUserId == null)
+        {
+            Context.Session.SetString("activeUserId", currentUserId);
+            Context.Session.SetString("fullName", currentUserfullName);
+            activeUserId = currentUserId;
+        }
+        string fullName = Context.Session.GetString("fullName");
+
+        bool isTrainer = (trainerId == null) ? true : false;
+
+        if (activeUserId == currentUserId)
+        {
+            <li class="nav-section-title">MANAGE DIET</li>
+
+            <li class="nav-item">
+                <a class="nav-link-active" asp-area="" asp-page="/Dashboard"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" /></svg> Intake Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link-active" asp-area="" asp-page="/Report"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" /><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" /></svg> Report</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link-active" asp-area="" asp-page="/ExportIntakes"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g fill="none" fill-rule="evenodd"><path d="M18 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8c0-1.1.9-2 2-2h5M15 3h6v6M10 14L20.2 3.8" /></g></svg> Export</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link-active" asp-area="Identity" asp-page="/Account/Manage/Index"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> Goals</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link-active" asp-area="" asp-page="/Calculators/CalculateMacroRatio"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 0v24h20v-24h-20zm5 22h-3v-3h3v3zm0-4h-3v-3h3v3zm0-4h-3v-3h3v3zm4 8h-3v-3h3v3zm0-4h-3v-3h3v3zm0-4h-3v-3h3v3zm4 8h-3v-3h3v3zm0-4h-3v-3h3v3zm0-4h-3v-3h3v3zm5 8h-3v-7h3v7zm0-8h-3v-3h3v3zm0-6h-16v-6h16v6zm-1-1h-14v-4h14v4z" /></svg> Goals Calculator</a>
+            </li>
+
+            <li class="nav-section-title" style="margin-top:40px;">ACCOUNT</li>
+
+            @*<a class="nav-link" id="profileIcon" asp-area="Identity" asp-page="/Account/Manage/Index" title="@fullName">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </a>
+                <a asp-area="Identity" asp-page="/Account/Manage/Index">
+                    Goals
+                    <svg id="navSVG" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </a>*@
+
+            @if (isTrainer)
+            {
+                @*<a asp-area="Identity" asp-page="/Account/Manage/Trainees">
+                        Trainees
+                        <svg id="navSVG" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                    </a>*@
+
+                <partial name="_TrainerPartial" />
+            }
+            else
+            {
+                @*<a asp-area="Identity" asp-page="/Account/Manage/Trainer">
+                        Trainer
+                        <svg id="navSVG" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                    </a>*@
+                <li class="nav-item">
+                    <a class="nav-link-active" asp-area="Identity" asp-page="/Account/Manage/Trainer"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Training</a>
+                </li>
+
+            }
+
+            @*<a asp-area="Identity" asp-page="/Account/Manage/Profile">
+                    Profile Settings
+                    <svg id="navSVG" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </a>
+
+                <button type="button" id="logout-btn" class="btn btn-danger" data-toggle="modal" data-target="#logoutModal">
+                    Log Out<svg id="navSVG" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>*@
+
+            <li class="nav-item">
+                <a class="nav-link-active" asp-area="Identity" asp-page="/Account/Manage/Profile"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Settings</a>
+            </li>
+
+            <li class="nav-item">
+                <a class=" logout-link" data-toggle="modal" data-target="#logoutModal"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg> Logout</a>
+            </li>
+
+            <div class="nav-footer">
+                <li class="nav-footer-item">
+                    <a class="nav-link-active" asp-area="" asp-page="/Index">About this app</a>
+                </li>
+                <li class="nav-footer-item">
+                    <a class="nav-link-active" asp-area="" asp-page="/Privacy">Privacy Policy</a>
+                </li>
+                <li class="nav-footer-item">&copy; 2020 - D301_WebApp</li>
+            </div>
+        }
+        else
+        {
+            <a class="nav-link text-danger" id="profileIconTrainee" asp-area="Identity" asp-page="/Account/Manage/Index" title="@fullName"><svg id="traineeSVG" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e40e0e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></a>
+
+            <a asp-area="Identity" asp-page="/Account/Manage/Index">Goals <svg id="navSVG" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></a>
+            <a asp-area="Identity" asp-page="/Account/Manage/Profile">View Profile</a>
+            <a asp-page="/Trainer">Exit Training</a>
+            <button type="button" id="logout-btn" class="btn btn-danger" data-toggle="modal" data-target="#logoutModal">
+                Log Out<svg id="navSVG" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </button>
+
+        }
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link-active" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link-active" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    }
+</ul>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/intake.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script src="~/js/delete.js"></script>
+    <script>
+        showLogoutModal();
+        {
+            $("#logoutModal").modal("show");
+            $("#logoutModal").appendTo("body");
+        }
+        ngOnDestroy();
+        {
+            $("body>#logoutModal").remove();
+        }
+    </script>
+}

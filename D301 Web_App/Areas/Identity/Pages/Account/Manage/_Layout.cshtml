@@ -1,0 +1,17 @@
+﻿@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<div>
+    <div id="section-title">Change your account settings</div>
+
+
+    <partial name="_ManageNav" />
+    <div class="flex-column" style="flex-basis: 45%">
+        @RenderBody()
+        </div>
+    </div>
+
+    @section Scripts {
+        @RenderSection("Scripts", required: false)
+    }
