@@ -1,11 +1,16 @@
-##README
+#### - This version of the application uses identity anonymous authentication, and does not support single sign-on -
+#### - This version uses sqlite instead of Sql Server -
+#### - The external API may not work on your device due to it requiring a white-listed IP address -
 
-Please have a look at the Wiki for more information about the project (inc. models)
+<br />
 
-Features of competitor app: https://moodle.ucol.ac.nz/mod/page/view.php?id=482211
+### Test login:
+Username
+```
+test1@gmail.com
+```
 
-Test logins:
-
-Username: test1@gmail.com (or a number from 1-8)
-
-Password: Test@123
+Password
+```
+Test@123
+```
