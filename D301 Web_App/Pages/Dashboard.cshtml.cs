@@ -140,7 +140,7 @@ namespace D301_WebApp.Pages.Dashboard
 
             TotalGoal1 = TotalFoodGoal1 + TotalCustomFoodGoal1;
             TotalGoal2 = TotalFoodGoal2 + TotalCustomFoodGoal2;
-            TotalGoal3 = TotalFoodGoal2 + TotalCustomFoodGoal3;
+            TotalGoal3 = TotalFoodGoal3 + TotalCustomFoodGoal3;
 
             //Set date if provided, otherwise redirect to current date
             try
@@ -385,16 +385,16 @@ namespace D301_WebApp.Pages.Dashboard
             {
                 string activeUserId = HttpContext.Session.GetString("activeUserId");
                 Intake.User = await _userManager.FindByIdAsync(activeUserId);
- 
-                if(CFoodType == true)
-                {
-                    Intake.CustomFood = await _context.CustomFoods.FindAsync(Intake.CustomFood.Id); //add custom food id into intake entry
-                    Intake.Food = null;
-                }
-                else
+
+                if (Intake.Food.Id != null)
                 {
                     Intake.Food = await _context.Foods.FindAsync(Intake.Food.Id);
                     Intake.CustomFood = null;
+                }
+                else if (Intake.CustomFood.Id != null)
+                {
+                    Intake.CustomFood = await _context.CustomFoods.FindAsync(Intake.CustomFood.Id);
+                    Intake.Food = null;
                 }
 
                 _context.Intakes.Add(Intake);

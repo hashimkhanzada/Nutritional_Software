@@ -167,6 +167,7 @@ namespace D301_WebApp.Api
             result.AddRange(await _context.CustomFoods.Where(p => p.Name.ToLower().Contains(' ' + term.ToLower())).ToListAsync());
             //then everything else
             result.AddRange(await _context.CustomFoods.Where(p => p.Name.ToLower().Contains(term.ToLower())).ToListAsync());
+            result.AddRange(await _context.CustomFoods.Where(p => p.Name.ToLower().Replace("-", "").Replace(" ", "").Contains(term.ToLower().Replace(" ", ""))).ToListAsync());
 
             //remove duplicates
             result = result.Distinct().ToList();

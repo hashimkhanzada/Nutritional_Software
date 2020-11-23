@@ -497,7 +497,7 @@ namespace D301_WebApp.Pages.Calculators
             await _userManager.UpdateAsync(user);
 
             LoadAsync(user);
-            return RedirectToPage("../Dashboard");
+            return RedirectToPage("../Index");
         }
     }
 }
